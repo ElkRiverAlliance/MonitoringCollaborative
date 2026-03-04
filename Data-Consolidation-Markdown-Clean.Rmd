@@ -1,0 +1,1092 @@
+---
+title: "Data Consolidation Markdown-Clean"
+author: "Evgeni Matveev, Elk River Alliance"
+date: "2023-11-30"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#STEP 1: Install Packages
+```{r Install Packages}
+#Remove any "#" preceeding the install.packages command and downlaod packages onto your computer
+
+#General R Packages
+install.packages("rmarkdown")
+install.packages("shiny")
+install.packages("readxl")
+
+install.packages("ggplot2", dependencies = TRUE)
+install.packages("rlang")
+install.packages("scales")
+install.packages("dplyr")
+install.packages("tidyverse")
+install.packages("reshape2")
+install.packages("ggpubr")
+install.packages("patchwork")
+install.packages("shiny")
+install.packages("zoo")
+install.packages("dplyr")
+install.packages("ggmap")
+install.packages("lubridate")
+install.packages("ggrepel")
+install.packages("plotly")
+
+install.packages("sf")
+install.packages("rgeos")
+install.packages("sp")
+install.packages("terra")
+install.packages("leaflet")
+
+#Elevation Data
+install.packages("elevatr")
+
+#Water Survey Canada hydrometric data
+install.packages("devtools")
+
+install.packages("rems")
+
+install.packages("tidyhydat")
+install.packages("devtools")
+library(devtools) #necessary for install_github()
+install_github("bcgov/rems",force=T)
+
+
+#BC Data Catalogue
+install.packages("bcdata")
+
+#Weather Canada
+install.packages("weathercan", 
+                 repos = c("https://ropensci.r-universe.dev", 
+                           "https://cloud.r-project.org"))
+install.packages("lutz")
+
+#For Columbia Basin Waterhub data
+install.packages("ckanr")
+
+```
+
+
+#STEP 2: Load Packages
+```{r Load Packages, message=FALSE, warning=FALSE}
+
+library(rmarkdown)
+library(sf)
+#library(rgeos)
+library(sp)
+#library(terra)
+
+
+library(ggplot2)
+library(scales)
+library(dplyr)
+library(tidyverse)
+library(reshape2)
+library(ggpubr)
+library(patchwork)
+library(shiny)
+library(zoo)
+library(dplyr)
+library(ggplot2)
+library(ggmap)
+library(lubridate)
+library(readxl)
+library(lubridate)
+library(ggrepel)
+library(plotly)
+library(leaflet)
+
+#Elevation data 
+library(elevatr)
+
+#Water Survey Canada
+library(rems)
+library(tidyhydat)
+
+
+#BC Data Catalogue
+library(bcdata)
+
+#Weather Canada
+library(weathercan)
+library(lutz)
+
+#Columbia Basin Waterhub Data
+library(ckanr)
+
+```
+
+
+#STEP 3: Upload shape files of Area of Interest polygon (in this case, the Elk River Watershed) and stream shape file
+
+```{r Part 1: Watershed Shape, fig.height=10}
+
+#Make sure your .shp file and all related files (CPG,DBF, PRJ, SBN, SBX, and SHX) are in the same folder within your working directory
+ERWshp<-st_read("./ERW Shape File/ElkRiverWatershed_CA_US.shp")
+
+ERWshpPoly<-st_cast(ERWshp, "POLYGON")
+st_zm(ERWshpPoly)
+
+#Make sure your projection is set to NAD83 (crs code 4269)
+st_transform(ERWshpPoly, crs = 4269)
+
+st_area(ERWshpPoly)
+
+```
+
+```{r Part 2: Stream and Basin shapes, fig.height=10}
+
+#Downloaded from:https://maps.gov.bc.ca/ess/hm/imap4m/
+
+#Load Basin Polygons
+Basin_polygon<-st_read("./Stream Network/NAMED_WATERSHED/FWA_NAMED_WATERSHEDS_POLY/FWNMDWTRSH_polygon.shp")
+Basin_polygon<-st_cast(Basin_polygon, "POLYGON")
+st_zm(Basin_polygon) #drop X and M dimensions
+st_transform(Basin_polygon, crs = 4269)#Make sure your projection is set to NAD83 (crs code 4269)
+
+ERWshpPoly2<-subset(Basin_polygon,GNIS_NAME=="Elk River")%>%select(geometry)
+
+Basin_polygon_ERW<-Basin_polygon %>% 
+  mutate(within_watershed = lengths(st_within(Basin_polygon,ERWshpPoly2)))%>%
+  subset(within_watershed==1)
+Basin_polygon_ERW<-Basin_polygon_ERW[order(-Basin_polygon_ERW$AREA_HA),] #Reorder by Basin Area (ha)
+
+
+#Load stream Lines
+Stream_lines<-st_read("./Stream Network/FWA_STREAM_NETWORKS_SP/FWSTRMNTWR_line.shp")
+Stream_lines<-st_cast(Stream_lines, "LINESTRING")
+st_zm(Stream_lines) #drop X and M dimensions
+st_transform(Stream_lines, crs = 4269)#Make sure your projection is set to NAD83 (crs code 4269)
+ 
+unique(Basin_polygon_ERW$GNIS_NAME)
+
+
+
+Basin_polygon_ERW$nPolygonsWithin<-st_within(Basin_polygon_ERW,Basin_polygon_ERW)%>%lengths()
+
+
+Basins<-ggplot(subset(Basin_polygon_ERW,nPolygonsWithin<3))+
+  geom_sf(aes(col=GNIS_NAME),fill=NA)+
+  theme(legend.position = "none")
+
+ggplotly(Basins)
+
+
+```
+
+```{r BC Landuse Layers }
+Landuse_polygon<-st_read("./BC Landuse Layers/2023 BC Landuse layers.shp")
+Landuse_polygon<-st_cast(Landuse_polygon, "POLYGON")
+
+Landuse_polygon<-st_transform(Landuse_polygon, crs = 4269)#Make sure your projection is set to NAD83 (crs code 4269)
+
+sf_use_s2(FALSE)
+
+
+
+Landuse_polygon_ERW<-Landuse_polygon %>% 
+  mutate(within_watershed = lengths(st_within(Landuse_polygon,st_transform(ERWshpPoly, crs = 4269))))%>%
+  subset(within_watershed==1)
+
+
+#PLAYING AROUND WITH MAPPING
+Landuse_polygon_ERW$CEF_DISTUR%>%unique()
+
+Landuse_polygon_ERW_mining<-Landuse_polygon_ERW%>%
+  subset(CEF_DISTUR=="Mining_and_Extraction"
+         )
+
+Landuse_polygon_ERW_cutblocks<-Landuse_polygon_ERW%>%
+  subset(CEF_DISTUR=="Cutblocks"
+         )
+
+
+Landuse_polygon_ERW_mining$SOURCE%>%unique()
+
+Landuse_polygon_ERW_mining$AREA_HA%>%sum()
+
+
+#Mine area in Ha
+Landuse_polygon_ERW_mining%>%
+  as.data.frame()%>%
+  select(AREA_HA)%>%
+  sum()
+  
+#leaflet() %>%
+ # addProviderTiles(providers$Esri.WorldImagery)%>%
+  #addPolygons(data=Landuse_polygon_ERW_mining,fillColor="red",fillOpacity = 0.8,stroke=F)%>%
+   # addPolygons(data=Landuse_polygon_ERW_cutblocks,fillColor="green",fillOpacity = 0.8,stroke=F)%>%
+#  setView(lng = -115, lat = 50, zoom = 8.1)
+
+```
+
+#STEP 4: Download Data
+
+##A. Environmental Monitoring System
+```{r Part 1-Current}
+
+### PART 1 - CURRENT DATA (aka, last 2 years) ###
+
+#Access EMS data from the last 2 years (THIS PART TAKES ABOUT 10-15 MINUTES)
+CurrentEMS<-get_ems_data(which = "2yr", ask = FALSE)
+
+
+
+#Collect coordinates and Site ID for all samples on EMS
+AllEMSIDsCurrent<-CurrentEMS%>%
+ filter(LOCATION_TYPE%in%c("RIVER,STREAM OR CREEK")& #this subsets the data to include only Rivers/Streams, delete if you'd like to access other location types
+           SAMPLE_CLASS%in%c("Regular","BACKGROUND"))%>% #This subsets to only Regular and Background sample types (i.e., not replicates or blanks)
+  distinct(EMS_ID,LONGITUDE,LATITUDE)%>% #Extract all the unique EMS sites and their coordinates
+  st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4269) #Change the coordinates to be recognized as coordinates
+
+#Categorize sites by whether they are in the shape polygon we defined in step 3, and select only those that are within the polygon
+WithinERWCurrent <- AllEMSIDsCurrent %>% 
+  mutate(within_watershed = lengths(st_within(AllEMSIDsCurrent, st_transform(ERWshpPoly, crs = 4269))))%>%
+  subset(within_watershed==1)
+
+#Create a list of all sites within your polygon
+ERWSiteListCurrent<-as.character(WithinERWCurrent$EMS_ID)
+
+#Subset your data to only include sites within your polygon
+CurrentERWdata<-CurrentEMS%>%
+  filter(EMS_ID%in%ERWSiteListCurrent)
+
+CurrentERWdata%>%subset(LOCATION_PURPOSE=="HYDROMETRIC")
+
+CurrentERWdata%>%subset(PARAMETER=="Selenium Total"&SAMPLE_STATE=="Animal Tissue")
+
+#write csv with data so you can repeat steps below without having to wait for data to re-download, if you want
+write.csv(CurrentERWdata, "CurrentERWdata.csv")
+```
+
+
+```{r Part 2-Historic}
+### PART 2 - HISTORIC DATA (aka, prior to two years ago) ###
+
+#THIS SECTION TAKES A LONG TIME
+download_historic_data() #When prompted to store a copy of ems data, type 1 or "Yes" into the console below. If you don't see options, click on the console below and hit "Enter" on your keyboard.
+hist_db_con <- connect_historic_db()
+hist_tbl <- attach_historic_data(hist_db_con)
+
+#Download only the EMS id's and lat long first to filter out any sites outside of your polygon
+filtered_historic<-hist_tbl%>%
+ filter(LOCATION_TYPE%in%c("RIVER,STREAM OR CREEK")& #this subsets the data to include only Rivers/Streams, delete if you'd like to access other location types
+           SAMPLE_CLASS%in%c("Regular","BACKGROUND"))%>% #This subsets to only Regular and Background sample types (i.e., not replicates or blanks)
+  distinct(EMS_ID,LONGITUDE,LATITUDE)%>% #Extract all the unique EMS sites and their coordinates
+  na.omit()%>%
+  collect()
+
+disconnect_historic_db(hist_db_con)
+
+#Subset only sites within your polygon
+AllEMSIDs<-st_as_sf(na.omit(filtered_historic),coords = c("LONGITUDE", "LATITUDE"), crs = 4269)
+WithinERW <- AllEMSIDs %>% mutate(within_watershed = lengths(st_within(AllEMSIDs, st_transform(ERWshpPoly, crs = 4269))))%>%subset(within_watershed==1)
+
+ERWSiteList<-as.character(WithinERW$EMS_ID)
+
+#Now download the data only from sites that are within the watershed
+hist_db_con <- connect_historic_db()
+hist_tbl <- attach_historic_data(hist_db_con)
+
+HistoricData<-hist_tbl%>%
+  filter(EMS_ID%in%ERWSiteList)%>%
+  collect() #THIS PART TAKES ABOUT 5 MINUTES
+
+disconnect_historic_db(hist_db_con)
+
+
+
+
+write.csv(HistoricData, "HistoricData.csv")
+
+
+
+
+```
+
+```{r Part 3-Combine}
+HistoricData$COLLECTION_START <-as.POSIXct(HistoricData$COLLECTION_START,format="%Y-%m-%d")
+HistoricData$PERMIT <-as.character(HistoricData$PERMIT)
+
+### PART 3 - COMBINE CURRENT AND HISTORIC DATA###
+EMSCurrentHistoricA <- bind_ems_data(CurrentERWdata, HistoricData)%>%distinct()
+
+#Stream names have to be added manually due to inconsistency of naming convention
+StreamNames<-read.csv("./EMS Monitoring Locations-edited.csv")%>%select(MONITORING_LOCATION, STREAM_NAME)  #upload excel spreadsheet
+EMSCurrentHistoricB<-merge(EMSCurrentHistoricA, StreamNames,all.x=T, by="MONITORING_LOCATION")
+EMSCurrentHistoricB$STREAM_NAME<-toupper(EMSCurrentHistoricB$STREAM_NAME)
+
+#Add Data Owner (spreadsheet manually made by Anne-Caroline Kroeger)
+EMSOwners<-read.csv("./EMS Data Owners.csv")%>%select(MONITORING_LOCATION_ID, PRESUMED_OWNER)%>%rename(EMS_ID=MONITORING_LOCATION_ID,DATA_OWNER=PRESUMED_OWNER)
+EMSCurrentHistoricC<-merge(EMSCurrentHistoricB,EMSOwners,by="EMS_ID",all.x=T)
+
+
+#Subset the most relevant data
+EMS_complete<-EMSCurrentHistoricC %>% 
+  subset(LOCATION_PURPOSE%in%c("TREND","BACKGROUND","HYDROMETRIC") &
+           SAMPLE_CLASS=="Regular"&
+         SAMPLE_STATE=="Fresh Water")%>%
+  rename(
+    SITE_ID=EMS_ID,
+    DATE=COLLECTION_START,
+    VALUE=RESULT,
+    DETECTION_LIMIT=METHOD_DETECTION_LIMIT
+    )%>%
+  add_column(DATA_REPOSITORY="Environmental Monitoring System")%>%
+  select(SITE_ID,MONITORING_LOCATION,STREAM_NAME,LONGITUDE,LATITUDE,DATE,DATA_REPOSITORY,PARAMETER,RESULT_LETTER,VALUE,UNIT,DATA_OWNER)
+
+EMS_complete$PARAMETER%>%unique()
+#THE EMS DATASET IS NOW COMPLETE
+
+#EMSCurrentHistoricC%>%subset(SAMPLE_STATE=="Animal Tissue")%>%unique()
+
+write.csv(EMS_complete, "EMS_complete.csv")
+
+```
+
+##B. Hydrometric Data
+
+```{r Hydrometric Data Part 1-Water Survey Canada}
+#Download data: THIS PART TAKES ABOUT 10-20 MINUTES
+download_hydat() #when prompted, type "1" or "Yes" into your console to accept download
+
+#Select only BC stations
+BC_stns <- hy_stations() %>%
+  filter(PROV_TERR_STATE_LOC == "BC")
+
+#Set Lat Long as coordinates
+BC_stns<-BC_stns%>%st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4269)
+
+#Subset sites to be within the polygon
+WaterSurveyERW_sites <- BC_stns %>% 
+  mutate(within_watershed = lengths(st_within(BC_stns, st_transform(ERWshpPoly, crs = 4269))))%>%
+  subset(within_watershed==1)
+
+#Convert statWaterSurveyERWion name to stream name
+WaterSurveyERW_sites$STREAM_NAME<- word(string = WaterSurveyERW_sites$STATION_NAME, start = 1, end = 2, sep = fixed(" "))
+
+#Extract data for stations within the Elk River Watershed
+WaterSurveyERW_data<-WaterSurveyERW_sites$STATION_NUMBER%>%hy_daily_flows()
+WaterSurveyERW<-merge(WaterSurveyERW_data,WaterSurveyERW_sites,by="STATION_NUMBER")
+WaterSurveyERW<-WaterSurveyERW%>%extract(geometry, c('LONGITUDE', 'LATITUDE'), '\\((.*), (.*)\\)', convert = TRUE) 
+
+#add units based on Hydat r package documentation
+WaterSurveyERW$UNIT<-"m^3/s"
+
+#Converting Date to POSIXct format
+WaterSurveyERW$Date<-as.POSIXct(WaterSurveyERW$Date,format="%Y-%m-%d")
+
+#Add data owner (hydat only contains Water Survey Canada data)
+WaterSurveyERW$DATA_OWNER<-"Water Survey Canada"
+
+#Selecting Relevant Columns
+WaterSurveyERW_complete<-WaterSurveyERW %>% 
+  add_column(DATA_REPOSITORY="Water Survey Canada")%>%
+  rename(
+    SITE_ID = STATION_NUMBER,
+    MONITORING_LOCATION = STATION_NAME,
+    DATE=Date,
+    PARAMETER=Parameter,
+    VALUE=Value
+    )%>%
+  select(SITE_ID,MONITORING_LOCATION,STREAM_NAME,LONGITUDE,LATITUDE,DATE,DATA_REPOSITORY,PARAMETER,VALUE,UNIT,DATA_OWNER)
+
+
+write.csv(WaterSurveyERW_complete, "WaterSurveyERW_complete.csv")
+```
+
+
+```{r Hydrometric Data Part 2-BC Data Catalogue}
+
+#activate resource
+bcdc_tidy_resources("9d9daae1-b379-4c92-b96d-6a81455caa74")
+
+#The following comes from: https://catalogue.data.gov.bc.ca/dataset/hydrometric_data
+#Each record has an associated resource number that can be seen in the URL of each subsection
+#Discharge in this current chunk refers to volume of water in m3/s 
+DischargeCurrent<- bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+ 'dd1fc2b7-22e3-46c5-848e-914b22586d5e')
+
+#FOR SOME REASON MISSING ON FEB 2, 2025 (ERROR 404, link not found)
+#Discharge20212022<-bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+# '7c8239d1-e6f9-4c8b-9c14-c6ca8bd567c0')
+
+Discharge20192021<-bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+ '9ab0f5a3-3f1d-428c-86b2-9339163128c2')
+
+Discharge20172019<-bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+ '1273a53c-1617-472c-b549-fece71963c6e')
+
+Discharge20152017<-bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+ 'ab59063b-8686-4804-a4b6-d876a398ce13')
+
+DischargePre2015<-bcdc_get_data(record = '9d9daae1-b379-4c92-b96d-6a81455caa74', resource =
+ '459cbc51-5003-4434-84f4-e4230e7ad3af')
+
+#Combine all of the downloaded sources
+BCDC_Discharge<-rbind(DischargeCurrent,
+                      #Discharge20212022,
+                      Discharge20192021,
+                      Discharge20172019,
+                      Discharge20152017,
+                      DischargePre2015)
+
+#Subset to polygon
+BCDC_DISCHARGE_Coords<-BCDC_Discharge%>%select(`Location ID`,Latitude,Longitude)%>%distinct()%>%st_as_sf(coords = c("Longitude", "Latitude"), crs = 4269)
+
+BCDC_DISCHARGE_ERW <- BCDC_DISCHARGE_Coords %>% mutate(within_watershed = lengths(st_within(BCDC_DISCHARGE_Coords, st_transform(ERWshpPoly, crs = 4269))))%>%subset(within_watershed==1)
+
+BCDC_Discharge_ERW_DataA<-BCDC_Discharge%>%subset(`Location ID`%in%BCDC_DISCHARGE_ERW$`Location ID` & Value!="NaN")
+
+#Change column names
+BCDC_Discharge_ERW_Data<-BCDC_Discharge_ERW_DataA%>% 
+  rename(
+    SITE_ID = `Location ID`,
+    MONITORING_LOCATION = `Location Name`,
+    DATE=`Date/Time(UTC)`,
+    PARAMETER=Parameter,
+    VALUE=Value,
+    UNIT=`Unit`,
+    LATITUDE=Latitude,
+    LONGITUDE=Longitude
+    )
+
+BCDC_Discharge_ERW_Data$STREAM_NAME<-BCDC_Discharge_ERW_Data$MONITORING_LOCATION%>%word(start = 1, end = 2, sep = fixed(" "))%>%as.character()%>%toupper()
+
+#All Data Catalogue hydrometric stations are owned by Teck, based on research by Anne Caroline Kroeger
+BCDC_Discharge_ERW_Data$DATA_OWNER<-"Teck"
+
+#Finalise dataset
+BCDC_Discharge_complete<-BCDC_Discharge_ERW_Data%>%
+  add_column(DATA_REPOSITORY="BC Data Catalogue")%>%
+  select(SITE_ID,MONITORING_LOCATION,STREAM_NAME,LONGITUDE,LATITUDE,DATE,DATA_REPOSITORY,PARAMETER,VALUE,UNIT,DATA_OWNER)
+
+
+
+write.csv(BCDC_Discharge_complete, "BCDC_Discharge_complete.csv")
+```
+
+
+##C. WaterHub Data
+```{r Download Waterhub A}
+
+
+ckanr_setup(url = "https://data.cbwaterhub.ca/")
+
+
+
+#Load all potential packages
+Packages_Table<-package_list_current(as="table",limit=500)%>%
+  select(location,id,latitude,longitude,name,creator)%>%
+  st_as_sf(coords = c("longitude", "latitude"), crs = 4269)
+
+#Subset packages to Elk River Watershed
+Packages_Table_ERW<-Packages_Table%>%
+  mutate(within_watershed = lengths(st_within(Packages_Table, st_transform(ERWshpPoly, crs = 4269))))%>%
+  subset(within_watershed==1)%>%
+  as.data.frame()
+
+#The following section loops through all the packages within the Elk River Watershed and packages and extracts only downloadable packages
+x<-data.frame()
+y<-data.frame()
+z<-data.frame()
+
+for (i in Packages_Table_ERW$id) {
+
+DATA_OWNER<-Packages_Table_ERW%>%subset(id==i)%>%select(creator)%>%as.character()
+STREAM_NAME<-Packages_Table_ERW%>%subset(id==i)%>%select(name)%>%word(start = 1, end = 2, sep = fixed("-"))%>%as.character()
+MONITORING_LOCATION<-Packages_Table_ERW%>%subset(id==i)%>%select(location)%>%as.character()
+
+x<-package_show(id=i, as="table")$resources
+
+x<-as.data.frame(x)
+
+if(is.null(x) || nrow(x) ==0) next
+
+y<-x%>%subset(datastore_active=="TRUE")%>%
+  select(id)%>%
+  add_column("STREAM_NAME"=STREAM_NAME,"DATA_OWNER"=DATA_OWNER,"MONITORING_LOCATION"=MONITORING_LOCATION)
+
+z<-rbind(z,y)
+
+}
+
+#Modify stream names
+z$STREAM_NAME<-gsub("-"," ",z$STREAM_NAME)%>%toupper()
+
+#The following section loops thorugh all packages and extracts the data
+#The data needs to be consolidated into a single source
+#Because the different data tables have different structures, they need to be manually unified
+#Value names, Unit names, and other lists of below will need to be updated if below code doesn't work and new data types are uploaded by users
+
+ValueNames<-c("values","water_temperature","average_water_temperature","average_water_temp","flow", "discharge", "water_level") 
+UnitNames<-c("flow_units","unit_of_measurement","average_water_temperature_units","water_temperature_units","average_water_temp_units","discharge_units", "water_level_units")
+SiteIDNames<-c("site_id","SITE_ID","site_ID")
+LongitudeNames<-c("longitude","Longitude","site_longitude")
+LatitudeNames<-c("latitude","Latitude","site_latitude")
+DateNames<-c("date_time_sampled","date_time","", "date.time")
+
+
+ERApackagelist<-list()
+WaterhubData_complete_unformatted<-data.frame()
+
+count = 1
+
+for (j in z$id) {
+
+  
+name<-z%>%subset(id==j)%>%select(STREAM_NAME)%>%as.character()
+owner<-z%>%subset(id==j)%>%select(DATA_OWNER)%>%as.character()
+location<-z%>%subset(id==j)%>%select(MONITORING_LOCATION)%>%as.character()
+
+table<-ckan_fetch(x=paste0("https://data.cbwaterhub.ca/dataset/80804406-bce2-417b-a62a-ff0981cec6a1/resource/",j,"/download/era_temp_liz001_20210707_20220127.csv"))
+
+
+
+
+if(j=="91e6da27-7bb5-4e3b-a12e-6fc5c56fbe4d"){
+  table<-table%>%mutate(water_temperature_units="degrees Celsius",latitude="49.501079",longitude="-115.174318")
+}
+
+
+ if(colnames(table)[1] == "NA.") {
+    next
+  }
+  
+  
+  
+  
+
+
+tableB<- table%>%
+  mutate(DATA_OWNER=owner,STREAM_NAME=name,MONITORING_LOCATION=location)%>%
+  rename("VALUE"=any_of(ValueNames),
+         "SITE_ID"=any_of(SiteIDNames),
+         "UNIT"=any_of(UnitNames),
+         "LATITUDE"=any_of(LatitudeNames),
+         "LONGITUDE"=any_of(LongitudeNames),
+         "DETECTION_LIMIT"=any_of("detection_limit"),
+         "DATE"=any_of(DateNames))%>%
+  rename("VALUE"=any_of("VALUE1"),
+         "UNIT"=any_of("UNIT2"))
+
+tableC<-as.data.frame(tableB)%>%
+  mutate(PARAMETER=ifelse(UNIT%in%c("degrees Celsius","degrees Celcius"),"Temperature",ifelse(UNIT%in%c("meter3 per second","metres3 per second"),"Discharge", "analyte")))%>%
+  select(DATE,SITE_ID,MONITORING_LOCATION,LATITUDE,LONGITUDE,VALUE,UNIT,DATA_OWNER,STREAM_NAME,PARAMETER)
+
+WaterhubData_complete_unformatted<-rbind(tableC,WaterhubData_complete_unformatted)
+  
+
+
+}
+
+## Convert all "less than" or "more than" values in the analyte column to numeric values (instead of characters)
+## If ">" present in Values column, then add "<" to Notes column - this is to prepare for changing values column to numeric without loosing track of < values
+WaterhubData_complete_unformatted$RESULT_LETTER <- ifelse(grepl("<", WaterhubData_complete_unformatted$VALUE), "<", "")
+WaterhubData_complete_unformatted$VALUE <- gsub("[<>]","",WaterhubData_complete_unformatted$VALUE) ### this works!
+WaterhubData_complete_unformatted$VALUE <- as.numeric(WaterhubData_complete_unformatted$VALUE)
+
+
+#Remove the letter T from dates
+WaterhubData_complete_unformatted$DATE<-sub("T"," ",WaterhubData_complete_unformatted$DATE)
+
+
+write.csv(WaterhubData_complete_unformatted,"WaterhubData_complete_unformatted.csv")
+```
+
+
+WATERHUB DATE FORMATTING
+To reformat the date column, the dataset needs to be saved as a CSV, opened in Excel, and the date needs to be reformatted there
+#Apply a filter to the headings. In site ID select "NGALX03", and select the DATE column. Copy values into new sheet.
+#Click Ctrl+F and go to the "Replace" tab. Replace all "\" with "-" and all " 0:00" with " " (blanks)
+#Copy date back into NGALX03 slot
+#Select the DATE column, go to custom formatting, and format it as yyyy-dd-mm h:mm:ss
+#Then Save As the reformatted sheet as WaterhubData_complete_formatted.csv" and go to the next chunk
+
+
+```{r WaterHub B}
+
+WaterhubData_complete<-read.csv("WaterhubData_complete_formatted.csv")
+WaterhubData_complete$DATE<-as.POSIXct(WaterhubData_complete$DATE,format="%Y-%d-%m %H:%M:%S",tz="UTC")
+WaterhubData_complete$VALUE<-as.numeric(WaterhubData_complete$VALUE)
+WaterhubData_complete$DATA_REPOSITORY<-"Columbia Basin Water Hub"
+
+#WaterhubData_complete$SITE_ID%>%unique()
+
+
+#check for NAs in DATE column to ensure data has been formatted correctly
+sum(is.na(WaterhubData_complete$DATE)) #should be 0 - if not, check manual formatting of DATE in Excel
+
+```
+
+##D. Weather Canada Data
+```{r WeatherCan Data}
+
+WeatherSt_BC <- filter(stations(), 
+             prov == "BC") %>%
+  select(-prov, -climate_id, -WMO_id, -TC_id)
+
+WeatherSt_BC<-WeatherSt_BC%>%st_as_sf(coords = c("lon", "lat"), crs = 4269)
+
+WeatherSt_ERW <- WeatherSt_BC %>% mutate(within_watershed = lengths(st_within(WeatherSt_BC, st_transform(ERWshpPoly, crs = 4269))))%>%subset(within_watershed==1)
+
+WeatherSt_ERW<-subset(WeatherSt_ERW,interval=="day")
+
+#stations_dl()
+
+#THIS TAKES A VERY, VERY LONG TIME!!! about a half hour
+Weather_ERW<-weather_dl(station_ids = WeatherSt_ERW$station_id,
+                             interval = "day", 
+                        quiet = TRUE)
+
+
+
+Weather_ERW_B<-Weather_ERW%>%
+  select(station_name,station_id,lat,lon,elev,date,mean_temp,min_temp,max_temp,snow_grnd,total_precip,total_rain,total_snow)%>%
+  melt(id=c("station_name","station_id","lat","lon","elev","date"),
+       variable.name = "PARAMETER",
+       na.rm = T)%>%
+     add_column(DATA_REPOSITORY="Weather Canada")%>%
+      rename(SITE_ID=station_id,
+         MONITORING_LOCATION=station_name,
+         LATITUDE=lat,
+         LONGITUDE=lon,
+         elevation=elev,
+         DATE=date,
+         VALUE=value)
+
+
+#Column needs to be added to append to other data
+Weather_ERW_B$STREAM_NAME<-"Weather Station"
+Weather_ERW_B$DATA_OWNER<-"Weather Canada"
+
+#adding units based on weather Can data https://climate.weather.gc.ca/climate_data/daily_data_e.html?hlyRange=%7C&dlyRange=1913-12-01%7C2023-07-16&mlyRange=1913-01-01%7C2007-02-01&StationID=1180&Prov=BC&urlExtension=_e.html&searchType=stnProv&optLimit=yearRange&StartYear=1840&EndYear=2023&selRowPerPage=25&Line=487&Month=7&Day=1&lstProvince=BC&timeframe=2&Year=2023
+
+Weather_ERW_Selected<-Weather_ERW_B%>%mutate(UNIT=case_when(PARAMETER%in%c("mean_temp","max_temp","min_temp")~"C",
+                                      PARAMETER%in%c("total_rain","total_precip")~"mm",
+                                      PARAMETER%in%c("total_snow","snow_grnd")~"cm"))
+
+
+Weather_ERW_Selected$SITE_ID<-as.character(Weather_ERW_Selected$SITE_ID)
+
+Weather_ERW_complete<-Weather_ERW_Selected%>%select(SITE_ID,MONITORING_LOCATION,STREAM_NAME,LONGITUDE,LATITUDE,DATE,PARAMETER,VALUE,UNIT,elevation,DATA_OWNER)
+
+
+weather_plot<-Weather_ERW%>%
+  filter(year<2025,month%in%c("06","07","08"),station_name%in%c("SPARWOOD CS","FERNIE"))%>%
+  group_by(year,station_name)%>%
+  summarise(max_max_temp=mean(mean_temp,na.rm = TRUE),station_name)%>%
+  ggplot(aes(x=as.numeric(year),y=max_max_temp,col=station_name))+
+  geom_point()+
+  #facet_wrap(~station_name)+
+  geom_smooth(se=F,span=0.9,method="loess")+
+  theme_classic()+
+  labs(y="Average Summer Temperature",x="Year")
+
+weather_plot
+
+ggplotly(weather_plot)
+
+unique(Weather_ERW_Selected$PARAMETER)
+
+write.csv(Weather_ERW_complete,"Weather_ERW_complete.csv")
+```
+
+
+##E. CABIN data
+```{r CABIN Data: Site Info}
+
+options(timeout=6000) #set timeout time to 10 mins, otherwise the download won't complete
+
+#Download site information for Pacific drainage basin 
+CABINSiteData<-read.csv("https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_study_data_mda08_1987-present.csv",fileEncoding = "UTF-16")
+
+CABINSiteData%>%subset(Site.Site=="ELB01A")
+
+#Subset site data to watershed polygon
+CABIN_coords<-CABINSiteData%>%select(`Site.Site`,Latitude,Longitude,SiteName.Nomdusite,SiteVisitID.IdentifiantdeVisite)%>%
+  distinct()%>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4269)
+
+CABIN_coords_ERW_A <- CABIN_coords %>% 
+  mutate(within_watershed = lengths(st_within(CABIN_coords, st_transform(ERWshpPoly, crs = 4269))))%>%
+  subset(within_watershed==1)
+
+#Some SiteIDs are shared between multiple unrelated sites. 
+##The code below calculates how many unique location descriptions (SiteName.Nomdusite) are associated with each SiteID (Site.Site)
+##Only completely unique site locations can be used to subset Benthic and Habitat data
+#NOTE: Elbow River has to be remove because the coordinates were not entered correctly, putting it into the Elk River Watershed
+#NOTE: The same site names have many different coordinates 
+CABIN_coords_ERW_C<-CABINSiteData%>%
+  add_column(DATA_REPOSITORY="CABIN")%>%
+  subset(SiteVisitID.IdentifiantdeVisite%in%CABIN_coords_ERW_A$SiteVisitID.IdentifiantdeVisite&SiteName.Nomdusite!="Elbow River")%>%
+  rename(LATITUDE=Latitude,LONGITUDE=Longitude,MONITORING_LOCATION=SiteName.Nomdusite,SITE_ID=Site.Site)%>%
+  select(LATITUDE, LONGITUDE, MONITORING_LOCATION,SiteVisitID.IdentifiantdeVisite,SITE_ID)
+
+
+
+CABIN_coords_ERW_C$MONITORING_LOCATION<-toupper(CABIN_coords_ERW_C$MONITORING_LOCATION)
+
+```
+
+```{r CABIN data: Benthics}
+
+#Download Benthic Invertebtrate data for Pacific drainage basin (TAKES A LONG TIME 5-10 mins)
+CABINBenthicData<-read.csv("https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_benthic_data_mda08_1987-present.csv",fileEncoding = "UTF-16")
+
+
+#Subset data to only include Elk River Watershed sites
+CABINBenthicData_ERW<-subset(CABINBenthicData,SiteVisitID.IdentifiantdeVisite%in%CABIN_coords_ERW_C$SiteVisitID.IdentifiantdeVisite)
+CABINBenthicData_ERW_B<-merge(CABINBenthicData_ERW,CABIN_coords_ERW_C,by="SiteVisitID.IdentifiantdeVisite")
+
+
+#Subset to 3 minutes of kick time and 400nm mesh size
+#Rename columns, then summarize counts of benthics by Order
+CABINBenthicData_complete<-CABINBenthicData_ERW_B%>%
+  mutate("DATE"=as.Date(JulianDay.JourJulien,origin=paste0(Year.Année,"-01-01")))%>% #Note, this date is an estimate, but accurate to within a day or two
+  subset(MeshSize.Maillage==400&KickTime.Périodedelapassedufilettroubleau==3)%>%
+  rename("ORDER"=Order.Ordre,
+         "VALUE"=Count.Décompte)%>%
+  add_column("PARAMETER"="Benthic Invertebrates",
+             "UNIT"="Count",
+             DATA_REPOSITORY="CABIN")%>%
+  group_by(Year.Année,SITE_ID,ORDER)%>%
+  summarise(VALUE=sum(VALUE),Year.Année,SITE_ID,ORDER,DATE,DATA_REPOSITORY,PARAMETER,UNIT,MONITORING_LOCATION,LATITUDE,LONGITUDE)%>%
+  distinct()%>%
+  select(DATE,SITE_ID,MONITORING_LOCATION,DATA_REPOSITORY,LATITUDE,LONGITUDE,PARAMETER,UNIT,ORDER,VALUE)
+
+#Reorder main orders so that EPT is first
+FillOrder<-c("Ephemeroptera","Plecoptera", "Trichoptera","Anthoathecatae", "Coleoptera", "Collembola", "Diptera", "Lumbriculida", "Neotaenioglossa", "Sarcoptiformes", "Trombidiformes", "Tubificida")  
+
+CABINBenthicData_complete$ORDER<-factor(CABINBenthicData_complete$ORDER,levels=FillOrder)
+
+
+#BENTHIC DATA NOW COMPLETE  
+write.csv(CABINBenthicData_complete, "CABINBenthicData_complete.csv")
+```
+
+
+
+
+```{r CABIN Data: Habitat}
+
+#Download water quality data (habitat data) for Pacific drainage basin (TAKES A LONG TIME: 10-15 mins)
+CABINHabitatData<-read.csv("https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_habitat_data_mda08_1987-present.csv",fileEncoding = "UTF-16")
+
+
+CABINHabitatData_ERW<-subset(CABINHabitatData,SiteVisitID.IdentifiantdeVisite%in%CABIN_coords_ERW_C$SiteVisitID.IdentifiantdeVisite)
+
+CABINHabitatData_ERW_B<-merge(CABINHabitatData,CABIN_coords_ERW_C,by="SiteVisitID.IdentifiantdeVisite")
+
+CABINHabitatData_complete<-CABINHabitatData_ERW_B%>%
+  subset(Type.Type=="Water Chemistry")%>% #This selects only water chemisty data (i.e., heavy metals, nutrients, TSS, pH)
+  mutate("DATE"=as.Date(JulianDay.JourJulian,origin=paste0(Year.Année,"-01-01")))%>%
+  add_column(DATA_REPOSITORY="CABIN")%>%
+  rename(PARAMETER=VariableDescription,
+             UNIT=Unit.Unité,
+             VALUE=Value.Valeur,
+             DETECTION_LIMIT=MDL)%>%
+  select(DATE,SITE_ID,MONITORING_LOCATION,LATITUDE,DATA_REPOSITORY,LONGITUDE,PARAMETER,UNIT,VALUE,DETECTION_LIMIT)
+
+#HABITAT DATA NOW COMPLETE
+CABINHabitatData_complete$SITE_ID%>%unique()
+CABINHabitatData%>%
+  filter()
+
+write.csv(CABINHabitatData_complete, "CABINHabitatData_complete.csv")
+```
+
+
+
+#STEP 5: Consolidate Data
+```{r Data Consolidation}
+all_data<-bind_rows(EMS_complete,
+                    WaterSurveyERW_complete,
+                    BCDC_Discharge_complete,
+                    WaterhubData_complete,
+                    Weather_ERW_complete,
+                    CABINBenthicData_complete,
+                    CABINHabitatData_complete)
+
+#Add Day Month and Year as numeric columns
+all_data$day<- format(all_data$DATE, "%j")%>%as.numeric()
+all_data$month<- format(all_data$DATE, "%m")%>%as.numeric()
+all_data$year<- format(all_data$DATE, "%Y")%>%as.numeric()
+
+Data_by_owner<-all_data%>%select(SITE_ID,DATA_OWNER)%>%unique()%>%group_by(DATA_OWNER)%>%summarise(SiteNumber=n())
+
+
+```
+
+#STEP 6: Add site elevation Data
+```{r Site Elevation}
+#THIS TAKES ABOUT 5-10 MINUTES#
+
+#The same site IDs may have slightly different coordinates, which is important for CABIN but not as important for elevation data
+#Here we estimate the average location of each site ID
+SiteCoordinates<-all_data%>%
+  select(SITE_ID,LATITUDE,LONGITUDE)%>%
+  unique()%>%
+  group_by(SITE_ID)%>%
+  mutate(LATITUDE=mean(LATITUDE),LONGITUDE=mean(LONGITUDE))%>%
+  unique()%>%
+  st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4269)
+
+#Adding Site Elevations
+SiteElevations <- get_elev_point(SiteCoordinates, prj = 4269, src = "aws",z=13)
+
+data.frame(SiteElevations)
+
+all_data_w_elevations<-merge(all_data, SiteElevations[ , c("SITE_ID", "elevation")], by="SITE_ID")
+
+all_data<-all_data_w_elevations
+
+```
+
+#STEP 7: Add basin data
+```{r Add Basin Data}
+
+Site_Locations<-all_data%>%
+          select(SITE_ID,LONGITUDE,LATITUDE)%>%
+          distinct()%>%
+          st_as_sf(coords = c("LONGITUDE", "LATITUDE"), crs = 4269)
+
+#Determine all named basins a site is within
+Station_in_Basins<-apply(st_intersects(Basin_polygon_ERW, Site_Locations, sparse = FALSE), 2, 
+                   function(col) { 
+                   Basin_polygon_ERW[which(col), ]$GNIS_NAME
+               })
+
+#Create dataframe of the main basin for each site
+MainBasin<-data.frame()
+for (i in c(1:length(Site_Locations$SITE_ID))) {
+  
+if (length(Station_in_Basins[[i]])==1){
+  x<-paste(Station_in_Basins[[i]], collapse = ', ')
+  }
+else {
+  x<-paste(Station_in_Basins[[i]][2], collapse = ', ')
+}
+MainBasin<-rbind(MainBasin,x)
+}
+
+PtsWBasins<-cbind(Site_Locations,"GNIS_NAME"=MainBasin[,1])
+
+all_data_w_basins<-merge(all_data, PtsWBasins[ , c("SITE_ID", "GNIS_NAME")], by="SITE_ID")
+
+all_data<-all_data_w_basins
+
+#test1<-ggplot()+
+#  geom_sf(data=Basin_polygon_ERW,aes(col=GNIS_NAME),fill=NA)+
+#  geom_sf(data=subset(Stream_lines,STRMRDR>4),aes(col=GNIS_NAME))+
+#  geom_sf(data=PtsWBasins,aes(col=GNIS_NAME))
+#
+#ggplotly(test1)
+#
+#test<-Stream_lines%>%subset(GNIS_NAME%in%Basin_polygon_ERW$GNIS_NAME)%>%ggplot()+geom_sf(aes(col=GNIS_NAME))
+#
+#ggplotly(test)
+
+all_data%>%
+  filter(DATA_REPOSITORY=="CABIN",PARAMETER=="Nickel Total")
+
+```
+
+#STEP 8: Write CSVs
+```{r Write CSV}
+
+#write.csv(unique(all_data$PARAMETER),"All Parameters.csv")
+
+select_parameters<-read.csv("All Parameters_SELECTED-2.csv")
+
+included_parameters<-select_parameters%>%
+  subset(INCLUDE==1)%>%
+  select(PARAMETER,PARAMETER_GENERAL)%>%
+  unique()
+
+all_data_selected<-all_data%>%
+  select(-geometry.x,-geometry.y,-Year.Année,-X)%>%
+  subset(PARAMETER%in%included_parameters$PARAMETER)%>%
+  left_join(included_parameters,by="PARAMETER")%>%
+  distinct()
+
+  
+#write.csv(all_data,"Consolidated Data-Full.csv")
+write.csv(all_data_selected,"Consolidated Data-Selected.csv")
+#write.csv(all_data_tiny,"Consolidated Data-Tiny.csv")
+
+
+all_data%>%select(PARAMETER_GENERAL)%>%unique()
+
+```
+
+```{r Playing Around}
+
+SeleniumData<-all_data_selected%>%
+  subset(PARAMETER_GENERAL=="Selenium Total"&UNIT=="mg/L"&SITE_ID%in%c("0200389","E206661","0200393","0200102","0200016")&is.na(RESULT_LETTER))
+
+SeleniumPlot<-ggplot(data=SeleniumData)+
+  geom_point(aes(y=VALUE*1000,x=DATE,color=reorder(MONITORING_LOCATION,-elevation),
+             text=paste("Monitoring Locations:",MONITORING_LOCATION,"<br>","Data Owner: ",DATA_OWNER,"<br>","Year:",year,"<br>","Month: ", month, "<br>",PARAMETER_GENERAL,"=",VALUE*1000,"ug/L")))+
+  scale_color_brewer(palette="Set1")+
+  geom_hline(yintercept=2,color="darkgreen")+
+  annotate("text",as.POSIXct("1990-04-05 12:51:00"),y=2.5,color="darkgreen",label="BC Aquatic Health Guideline",linetype = "dashed")+
+  geom_hline(yintercept=10,color="darkblue")+
+  annotate("text",as.POSIXct("1990-04-05 12:51:00"),y=10.5,color="darkblue",label="BC Drinking Water Guideline",linetype = "dashed")+
+  theme_classic()+
+  theme(legend.position = "bottom")+
+  labs(x="Date",y="Total Selenium Concentration (ug/L)",color="Monitoring Location")
+
+bbox<-c(-115.366745,48.999592,-114.614182,50.277932)
+SiteMapbbox<-get_stadiamap(bbox=bbox,maptype = "stamen_terrain", zoom =9 )
+
+
+SiteMap<-ggmap(SiteMapbbox)+
+  scale_fill_brewer(palette="Set1")+
+  geom_sf(data=Landuse_polygon_ERW_mining,aes(fill=CEF_DISTUR),col=NA,fill="black",inherit.aes = FALSE)+
+  geom_sf(data=ERWshpPoly,inherit.aes = FALSE,fill=NA,col="lightblue")+
+  geom_point(data=SeleniumLocationData,aes(x=LONGITUDE,y=LATITUDE,fill=reorder(MONITORING_LOCATION,-elevation)),size=6,shape=21,col="black")+
+  theme_classic()+
+  theme(legend.position ="none")
+
+
+
+ggsave("SiteMap.png",SiteMap,dpi=300)
+
+SeleniumCombined<-SiteMap+SeleniumPlot
+
+SeleniumPlotly<-ggplotly(SeleniumPlot,tooltip = c("text"),dynamicTicks = T)%>% 
+            layout(legend = list(orientation = 'h', xanchor="center",x = 0.5, y = 50))
+SeleniumPlotly
+
+htmlwidgets::saveWidget(as_widget(SeleniumPlotly), "SeleniumPlotly.html")
+
+
+ERASeleniumData<-all_data_selected%>%
+  subset(PARAMETER_GENERAL=="Selenium Total"&
+           UNIT=="mg/L"&DATA_OWNER%in%c("Elk River Alliance"))
+
+ggplot(ERASeleniumData,aes(x=SITE_ID,y=VALUE*1000,shape=RESULT_LETTER,size=2))+
+  geom_jitter()+
+  theme_classic()
+
+
+
+register_stadiamaps("e3c4d29c-45ed-461c-b37f-12163580e74c", write = FALSE)
+
+  SeleniumLocationData<-SeleniumData%>%
+  select(SITE_ID, MONITORING_LOCATION,LATITUDE,LONGITUDE,elevation)%>%
+  unique()
+  
+
+
+x<-read.csv(file.choose())  
+x$Time<-as.POSIXct(x$Time,format="%Y-%m-%d %H:%M")
+
+x$QC<-cut(x$Value,breaks=c(-Inf, 7,  Inf), 
+                   labels=c("Quality Checked","High Flow"))
+  
+
+SampleDischargePlot<-ggplot(x,aes(Time,Value))+
+  geom_line(aes(col=QC,group = factor(c(0, cumsum(abs(head(QC, -1) != tail(QC, -1)))))))+
+  scale_color_manual(values=c("black","grey"))+
+  theme_classic()+
+  labs(y="Discharge (m3)",x="Date")+
+  theme(legend.position = "none",
+   panel.grid.minor = element_blank(), 
+   panel.grid.major = element_blank(),
+   plot.background = element_rect(fill = "transparent", colour = NA))
+
+SampleDischargePlot
+
+sample_temp_plot<-WaterhubData_complete%>%
+  subset(PARAMETER=="Temperature" & SITE_ID%in%c("MOR001","MOR002"))%>%
+  ggplot(aes(x=DATE,y=VALUE))+
+  geom_line(aes(col=SITE_ID))+
+  labs(x="Date",y="Temperature (C)")+
+  theme_classic()+
+  theme()
+  
+
+ggsave("Sample Discharge.pdf",SampleDischargePlot,width=3,height=2,dpi=600)
+
+```
+
+
+```{r Benthics}
+
+
+BenthicColors<-c("darkgreen","forestgreen","chartreuse3","darkred","maroon","yellow","#cd8f14","#c8584c","black","darkorange","purple","blue","pink")
+
+BenthicPlot<-all_data%>%
+  subset(PARAMETER=="Benthic Invertebrates"&DATA_REPOSITORY=="CABIN")%>%
+ggplot(aes(x=year,y=VALUE,fill=ORDER))+
+  geom_col()+
+  scale_y_continuous(labels = scales::comma)+
+  scale_fill_manual(values = BenthicColors)+
+  facet_wrap(~SITE_ID)+
+  labs(x="Year",y="Count")+
+  theme_classic()+theme(
+    axis.text.x=element_text(angle=90),
+    plot.background = element_blank(),
+    panel.grid.major = element_blank(),
+    panel.grid.minor = element_blank(),
+    panel.border = element_blank(),
+    legend.background = element_blank(),
+    panel.background = element_blank()
+  ) 
+
+BenthicPlot%>%ggplotly()
+
+ggsave("Benthic Plot.png",BenthicPlot,device="png",height = 3,width = 5)
+
+all_data$PARAMETER%>%unique()%>%sort()
+
+all_data%>%select(SITE_ID,MONITORING_LOCATION,LONGITUDE,LATITUDE,DATA_OWNER)%>%unique()%>%write.csv("Sites as of Aug 2024.csv")
+
+    ggplot(ConsolDataB_selected(),aes(x=as.factor(year),y=VALUE,fill=ORDER))+
+      geom_col()+
+      scale_x_continuous(breaks=seq(2012,2023,1))+
+      scale_y_continuous(labels = scales::comma)+
+      scale_fill_manual(values = BenthicColors)+
+      facet_wrap(~SITE_ID)+
+      labs(x="Year",y="Count")+
+      theme_classic()+theme(
+        axis.text.x=element_text(angle=90),
+        plot.background = element_blank(),
+        panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        panel.border = element_blank(),
+        legend.background = element_blank(),
+        panel.background = element_blank()
+      ) 
+
+```
+
+```{r Spatial Graphs}
+
+
+SelSites<-all_data_selected%>%
+  select(LATITUDE,LONGITUDE,SITE_ID)%>%
+  unique()%>%
+  st_as_sf(coords=c("LONGITUDE","LATITUDE"),crs=4269)
+
+BasinSimple<-subset(Basin_polygon_ERW,nPolygonsWithin==3)
+ElkR<-st_intersection(BasinSimple)%>%filter(n.overlaps==1)%>%head(1)
+BasinSimple<-rbind(subset(BasinSimple,GNIS_NAME!="Elk River"),ElkR[1:16])
+
+
+BasinSimple$nSites<-st_intersects(BasinSimple,SelSites)%>%lengths()
+
+
+
+ggplot()+geom_sf(data=BasinSimple,aes(fill=nSites))+scale_fill_distiller(palette = "Spectral")+
+  geom_sf(data=SelSites,col="black")
+
+all_data%>%
+  subset(SITE_ID=="WIG01")
+
+```
