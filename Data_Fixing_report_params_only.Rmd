@@ -1,0 +1,575 @@
+---
+title: "Consolidated_Data_Fixing"
+author: "AlexMcClymont"
+date: "2025-01-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+
+Install required packages - only run this the first time running this code, or to check for updates
+```{r}
+install.packages("readr")
+install.packages("dplyr")
+install.packages("ggplot2")
+install.packages("piggyback")
+```
+
+Load required packages
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(piggyback)
+```
+
+
+Import data from csv
+```{r}
+all_data <- read.csv("C:/Users/user/Desktop/ERA/Partner data review/MonCol Code and Data/Data Consolidation Markdown/Consolidated Data-selected.csv") #load csv with consolidated data to data frame
+#data must be in .csv format, have the same name as above, and be located in the same folder as this R file
+```
+
+
+Check that date is in POSIXct format
+```{r}
+ str(all_data$DATE)
+
+#run the below line if date is not in POSIXct format
+all_data$DATE<-as.POSIXct(all_data$DATE,format="%Y-%m-%d")
+```
+
+
+
+Create empty columns filled with NAs in data set to later fill with data corrections for rows that likely contain mistakes. If any other error types are present besides the ones below, create an empty column populated with NA to fill later.
+```{r}
+all_data$CORRECTION_COLUMN <- NA #column to be corrected
+all_data$CORRECTION_VALUE <- NA # value after correction
+all_data$CORRECTION_TYPE <- NA # why a correction was made
+all_data$CORRECTION_NOTES <- NA #notes
+```
+
+
+Corrections to stream name
+```{r}
+#stream name for some values was entered as "UPSTREAM OF" which is not a valid stream name. Used GPS coordinates to determine that the correct stream name is Dry Creek
+upstream_corr <- all_data %>% filter(STREAM_NAME == "UPSTREAM OF") #create data frame of rows that have "UPSTREAM OF" in STREAM_NAME column
+upstream_corr$CORRECTION_VALUE <- "Dry Creek" #enter correct stream name (Dry Creek) into CORRECTION_VALUE column
+upstream_corr$CORRECTION_COLUMN <- "STREAM_NAME"
+upstream_corr$CORRECTION_TYPE <- "Incorrect stream name"
+upstream_corr$CORRECTION_NOTES <- "Incorrect stream name"
+```
+
+
+Change all MICEHL CREE to MICHEL CREEK
+```{r}
+michel_corr <- all_data %>% filter(grepl("MICEHL CREE", MONITORING_LOCATION)) #create data set that contains all rows with "MICEHL CREE"
+michel_corr$CORRECTION_VALUE <- gsub("MICEHL CREE", "MICHEL CREEK", michel_corr$MONITORING_LOCATION) #fill CORRECTION_VALUE column with value from MONITORING_LOCATION column but with "MICEHL CREE" corrected to "MICHEL CREEK"
+michel_corr$CORRECTION_COLUMN <- "MONITORING_LOCATION"
+michel_corr$CORRECTION_TYPE <- "Incorrect monitoring location"
+michel_corr$CORRECTION_NOTES <- "Incorrect monitoring location"
+```
+
+
+If site ids are assigned to different monitoring locations, change site ids.
+Determine which site ids are associated with more than one monitoring location
+```{r}
+site_id_list <- unique(all_data$SITE_ID) #create list of site ids to be looped through
+i=1
+
+for (i in 1:length(site_id_list)){
+  temp <- all_data %>% filter(SITE_ID == site_id_list[i])
+  
+  if(length(unique(temp$MONITORING_LOCATION))>1) {
+    print(site_id_list[i])
+  }
+}
+```
+
+
+For each above site id, check coordinates to see if site id applies to more than one location. If site id does apply to more than one site, create new site ID. This can be just for visualization of potential data errors.
+```{r}
+
+site_id1 <- all_data %>% filter(SITE_ID == "ELK02") #check each site id
+unique(site_id1$LATITUDE)
+unique(site_id1$LONGITUDE) #can see based on lat and longs whether site ids refer to more than one location - in the case of COL001, there are two distinct locations - change the site id for one of them
+
+BLD001 <- site_id1 %>% filter(MONITORING_LOCATION == "BLEASEDELL CREEK") #filter data for site id = ELK02 and monitoring location = BLEASEDELL CREEK
+BLD001$CORRECTION_VALUE <- "BLD001" 
+BLD001$CORRECTION_TYPE <- "Inaccurate site id"
+BLD001$CORRECTION_NOTES <- "Original site id referred to multiple locations. Changed site id to be unique to this location."
+BLD001$CORRECTION_COLUMN <- "SITE_ID"
+
+
+```
+
+
+Many monitoring locations are generic (eg. ELK RIVER, FORDING RIVER, etc.). For making figures below to identify potential errors and for ease of data interpretation, monitoring locations should be made more specific when possible.
+```{r}
+er <- all_data %>% filter(MONITORING_LOCATION == "ELK RIVER")
+unique(er$SITE_ID) #list of site ids for which monitoring location = ELK RIVER
+
+boi001_all <- all_data %>% filter(SITE_ID == "BOI001")
+unique(boi001_all$MONITORING_LOCATION) #if one monitoring location is more specific, change generic monitoring location to this location
+boi001_er <- boi001_all %>% filter(MONITORING_LOCATION == "ELK RIVER")
+boi001_er$CORRECTION_VALUE <- "Boivin Creek (BOI001), Elk River Watershed"
+boi001_er$CORRECTION_TYPE <- "Inaccurate monitoring location"
+boi001_er$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+boi001_er$CORRECTION_COLUMN <- "MONITORING_LOCATION"
+
+
+boi002_all <- all_data %>% filter(SITE_ID == "BOI002")
+unique(boi002_all$MONITORING_LOCATION) #if one monitoring location is more specific, change generic monitoring location to this location
+boi002_er <- boi002_all %>% filter(MONITORING_LOCATION == "ELK RIVER")
+boi002_er$CORRECTION_VALUE <- "Boivin Creek (BOI002), Elk River Watershed"
+boi002_er$CORRECTION_TYPE <- "Inaccurate monitoring location"
+boi002_er$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+boi002_er$CORRECTION_COLUMN <- "MONITORING_LOCATION"
+
+
+col001_all <- all_data %>% filter(SITE_ID == "COL001")
+unique(col001_all$MONITORING_LOCATION) #both monitoring locations generic, change to be more specific
+col001_all$CORRECTION_VALUE <- "Coal Creek (COL001), Elk River Watershed"
+col001_all$CORRECTION_TYPE <- "Inaccurate monitoring location"
+col001_all$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+col001_all$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+col003_all <- all_data %>% filter(SITE_ID == "COL003")
+unique(col003_all$MONITORING_LOCATION) #both monitoring locations are generic, use lat and longs to determine specific location. change monitoring location to be more specific.
+unique(col003_all$LATITUDE)
+unique(col003_all$LONGITUDE)
+col003_all$CORRECTION_VALUE <- "Coal Creek (COL003), Elk River Watershed"
+col003_all$CORRECTION_TYPE <- "Inaccurate monitoring location"
+col003_all$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+col003_all$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+elk05_all <- all_data %>% filter(SITE_ID == "ELK05")
+unique(elk05_all$MONITORING_LOCATION) #only one monitoring location, use lat and long to determine more specific location
+unique(elk05_all$LATITUDE)
+unique(elk05_all$LONGITUDE)
+elk05_all$CORRECTION_VALUE <- "Elk River D/S Elk Lakes (ELK05)"
+elk05_all$CORRECTION_TYPE <- "Inaccurate monitoring location"
+elk05_all$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+elk05_all$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+fr <- all_data %>% filter(MONITORING_LOCATION == "FORDING RIVER")
+unique(fr$SITE_ID) #list of site ids for which monitoring location = FORDING RIVER
+
+for02_all <- all_data %>% filter(SITE_ID == "FOR02") 
+unique(for02_all$MONITORING_LOCATION) #change monitoring location to "FORSYTH CREEK"
+for02_fr <- fr %>% filter(SITE_ID == "FOR02") 
+for02_fr$CORRECTION_VALUE <- "FORSYTH CREEK"
+for02_fr$CORRECTION_TYPE <- "Inaccurate monitoring location"
+for02_fr$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+for02_fr$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+ac <- all_data %>% filter(MONITORING_LOCATION == "ALEXANDER CREEK")
+ac1 <- all_data %>% filter(SITE_ID %in% c("AC1", "ALX0001")) #AC1 and ALX001 are the same location based on lats and longs
+ac1$CORRECTION_VALUE <- "ALEXANDER CREEK AT ALX001" #update monitoring location to include site id
+ac1$CORRECTION_TYPE <- "Inaccurate monitoring location"
+ac1$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+ac1$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+alx003 <- all_data %>% filter(SITE_ID == "ALX003")
+alx003$CORRECTION_VALUE <- "ALEXANDER CREEK AT ALX003"
+alx003$CORRECTION_TYPE <- "Inaccurate monitoring location"
+alx003$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+alx003$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+mc <- all_data %>% filter(MONITORING_LOCATION == "MICHEL CREEK")
+mc_lat <- unique(mc$LATITUDE)
+mc_lat
+
+mc1 <-filter(all_data, LATITUDE == mc_lat[1])
+mc1$CORRECTION_VALUE <- "MICHEL CREEK AT MC1"
+mc1$CORRECTION_TYPE <- "Inaccurate monitoring location"
+mc1$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+mc1$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+mc2 <-filter(all_data, LATITUDE == mc_lat[2])
+mc2$CORRECTION_VALUE <- "MICHEL CREEK AT MC2"
+mc2$CORRECTION_TYPE <- "Inaccurate monitoring location"
+mc2$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+mc2$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+mc3 <-filter(all_data, LATITUDE == mc_lat[3])
+mc3$CORRECTION_VALUE <- "MICHEL CREEK AT MC3"
+mc3$CORRECTION_TYPE <- "Inaccurate monitoring location"
+mc3$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+mc3$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+mc4 <-filter(all_data, LATITUDE == mc_lat[4])
+mc4$CORRECTION_VALUE <- "MICHEL CREEK AT MC4"
+mc4$CORRECTION_TYPE <- "Inaccurate monitoring location"
+mc4$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+mc4$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+cr <- all_data %>% filter(MONITORING_LOCATION == "COLUMBIA RIVER") #this is not really on the Columbia River, but on Bighorn Creek in the Flathead
+cr$CORRECTION_VALUE <- "BIGHORN CREEK"
+cr$CORRECTION_TYPE <- "Inaccurate monitoring location"
+cr$CORRECTION_NOTES <- "Monitoring location originally entered was not specific. Monitoring location changed to better represent specific location."
+cr$CORRECTION_COLUMN <- "MONITORING LOCATION"
+
+
+
+#bind together all above corrected monitoring location data into one dataframe
+site_id_corr <- rbind(boi001_er, boi002_er, col001_all, col003_all, elk05_all, for02_fr, ac1, alx003, mc1, mc2, mc3, mc4, cr)
+```
+
+
+Bind data that has been corrected for site id or monitoring location together and append to original data. 
+```{r}
+location_data_corr <- rbind(upstream_corr, michel_corr, BLD001, site_id_corr)
+
+all_data <- rbind(all_data, location_data_corr)
+```
+
+Create figure data by removing data below detection limit to better visualize data and easier identify errors (eg. data that was entered as actual value but should have been entered as below detection limit)
+```{r}
+figure_data <- all_data %>% filter(!RESULT_LETTER %in% c("<")) 
+
+```
+
+
+
+Data corrections for selenium
+```{r}
+selenium <- figure_data %>%
+  filter(grepl("selenium", PARAMETER_GENERAL, ignore.case = TRUE)) 
+#values entered as 0 were likely actually below detection, no detection limit is low enough to say that the selenium concentration was actually 0. Replace these values with the lowest detection limit for that parameter and add "<" to CORRECTION_VALUE column
+selenium1 <-selenium %>% subset(VALUE == 0) %>% subset(UNIT %in% c("mg/L", "mgL")) #create data frame from selenium data frame where VALUE = 0
+unique(selenium1$PARAMETER) #only parameter that has values = 0 is Selenium Total
+
+#find the lowest detection limit for Selenium Total
+selenium_total_DL <- all_data %>% filter(PARAMETER == "Selenium Total") %>% #filter for selenium total
+  filter(RESULT_LETTER == "<") %>% #filter for data below detection
+  filter(UNIT == "mg/L")
+min(selenium_total_DL$VALUE) #lowest detection limit for Selenium Total is 0.00005 mg/L
+  
+selenium1$CORRECTION_TYPE <- "Value likely below detection"
+selenium1$CORRECTION_VALUE <- "<0.00005"
+selenium1$CORRECTION_NOTES <- "Value was likely below detection but entered as 0; corrected value entered as below lowest detection limit for that parameter"
+selenium1$CORRECTION_COLUMN <- "RESULT_LETTER"
+
+
+#Incorrect units - entered as mg/L, was likely measured in ug/L
+
+selenium3 <- selenium %>% filter(MONITORING_LOCATION %in% c("DRY CR. U/S HEADPOND  (LC_DC3)", "FORDING RIVER ABOVE LINE CREEK", "FORDING RIVER BELOW LINE CREEK", "LINE CR (PE5353) LINE CR AT CANYON MOUTH", "LINE CR (PE5353) LINE CR U/S MINE SERVICES", "LINE CR RES; NORTH HORSESHOE CREEK", "LINE CREEK OPERATIONS - EAST TRIBUTARY CREEK (LC_DCEF)", "LINE CREEK OPERATIONS - FORDING RIVER DOWNSTREAM OF DRY CREEK", "LINE CREEK OPERATIONS - FORDING RIVER UPSTREAM OF DRY CREEK", "WEST LINE CREEK", "DRY CR. U/S OF FORDING MINE ROAD (LC_DC1)")) %>%  #sites were selected manually after visual investigation of figures produced by code above, potential errors identified where a few data points were  greater than ~100x all other data points
+filter(PARAMETER == "Selenium Total") %>% #only total selenium had potential errors at the above sites
+  filter(VALUE > 0.99) %>% #0.99 is the value above which all potential errors were, it itself is not a meaningful value
+filter(UNIT %in% c("mgL", "mg/L"))
+
+
+selenium3a <- selenium %>% filter(MONITORING_LOCATION %in% c("GRACE CR. U/S CP RAIL TRACKS  (LC_GRCK)")) %>%  #sites were selected manually after visual investigation of figures produced by code above, potential errors identified where a few data points were  greater than ~100x all other data points
+filter(PARAMETER == "Selenium Total") %>% #only total selenium had potential errors at the above sites
+  filter(VALUE>0.7) %>% #0.7 is the value above which all potential errors were, it itself is not a meaningful value
+filter(UNIT %in% c("mgL", "mg/L"))
+
+
+selenium3b <- selenium %>% filter(MONITORING_LOCATION %in% c("SOUTH LINE CREEK")) %>%  #sites were selected manually after visual investigation of figures produced by code above, potential errors identified where a few data points were  greater than ~100x all other data points
+filter(PARAMETER == "Selenium Total") %>% #only total selenium had potential errors at the above sites
+  filter(VALUE> 0.3) %>% #0.3 is the value above which all potential errors were, it itself is not a meaningful value
+filter(UNIT %in% c("mgL", "mg/L"))
+
+
+selenium3c <- selenium %>% filter(MONITORING_LOCATION %in% c("LINE CR (PE5353) LINE CR ABOVE SOUTH LINE CR")) %>%  #sites were selected manually after visual investigation of figures produced by code above, potential errors identified where a few data points were  greater than ~100x all other data points
+filter(PARAMETER == "Selenium Total") %>% #only total selenium had potential errors at the above sites
+  filter(VALUE> 30) %>% #30 is the value above which all potential errors were, it itself is not a meaningful value
+filter(UNIT %in% c("mgL", "mg/L"))
+
+
+
+selenium3 <- rbind(selenium3, selenium3a, selenium3b, selenium3c)
+
+
+
+selenium3$CORRECTION_TYPE <- "Likely incorrect unit"
+selenium3$CORRECTION_VALUE <- selenium3$VALUE/1000
+selenium3$CORRECTION_NOTES <- "Value is approximately three orders of magnitude greater than other relevant data points; likely entered as mg/L when should have been ug/L. Resolved by dividing by 1000"
+selenium3$CORRECTION_COLUMN <- "VALUE"
+
+
+
+
+### Individual data point fixes
+
+selenium4 <- selenium %>% filter(MONITORING_LOCATION == "LINE CREEK U/S OF WEST LINE CREEK") %>% 
+  filter(PARAMETER == "Selenium Dissolved") %>%  #single point 2 orders of magnitude greater than contemporaneous data at that site, lots of other data points to illustrate typical total selenium concentrations at that site and time period. No spikes at nearby sites around same time.
+  filter(VALUE == 0.426) #likely error = 0.426
+selenium4$CORRECTION_TYPE <- "Likely entering error"
+selenium4$CORRECTION_VALUE <- selenium4$VALUE/10
+selenium4$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+selenium4$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium5 <- selenium %>% filter(MONITORING_LOCATION %in% c("ELK RIVER ABOVE LINDSAY CREEK", "LINE CREEK U/S OF WEST LINE CREEK")) %>% 
+    filter(PARAMETER == "Selenium Total") %>%  #single point much greater than contemporaneous data at that site, lots of other data points to illustrate typical total selenium concentrations at that site and time period. No spikes at nearby sites around same time.
+  filter(VALUE > 0.1) #likely errors above 0.1
+selenium5$CORRECTION_TYPE <- "Likely entering error"
+selenium5$CORRECTION_VALUE <- selenium5$VALUE/10
+selenium5$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+selenium5$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium6 <- selenium %>% filter(MONITORING_LOCATION == "LINE CREEK OPERATION- CHAUNCEY CREEK") %>% 
+  filter(PARAMETER == "Selenium Dissolved") %>%  #single point 2 orders of magnitude greater than contemporaneous data at that site, lots of other data points to illustrate typical total selenium concentrations at that site and time period. No spikes at nearby sites around same time.
+  filter(VALUE > 0.1) 
+selenium6$CORRECTION_TYPE <- "Likely entering error"
+selenium6$CORRECTION_VALUE <- selenium6$VALUE/10
+selenium6$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+selenium6$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium7 <- selenium %>% filter(MONITORING_LOCATION == "LINE CREEK OPERATION- CHAUNCEY CREEK") %>% 
+  filter(PARAMETER == "Selenium Total") %>%  #single point 2 orders of magnitude greater than contemporaneous data at that site, lots of other data points to illustrate typical total selenium concentrations at that site and time period. No spikes at nearby sites around same time.
+  filter(VALUE > 0.1) 
+selenium7$CORRECTION_TYPE <- "Likely entering error"
+selenium7$CORRECTION_VALUE <- selenium7$VALUE/100
+selenium7$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+selenium7$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium8 <- selenium %>% filter(MONITORING_LOCATION == "LINE CREEK U/S MSA NORTH PITS") %>% 
+  filter(PARAMETER == "Selenium Total") %>%  #single point 2 orders of magnitude greater than contemporaneous data at that site, lots of other data points to illustrate typical total selenium concentrations at that site and time period. No spikes at nearby sites around same time.
+  filter(VALUE > 2) 
+selenium8$CORRECTION_TYPE <- "Likely entering error"
+selenium8$CORRECTION_VALUE <- selenium8$VALUE/100
+selenium8$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+selenium8$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium9 <- selenium %>% filter(SITE_ID == "AC1")
+selenium9$CORRECTION_TYPE <-"Likely incorrect unit"
+selenium9$CORRECTION_VALUE <- selenium9$VALUE/1000
+selenium9$CORRECTION_NOTES <- "Value is approximately three orders of magnitude greater than other data points; likely entered as mg/L when should have been ug/L. Resolved by dividing by 1000."
+selenium9$CORRECTION_COLUMN <- "VALUE"
+
+
+selenium_corr <- rbind(selenium1, selenium3, selenium4, selenium5, selenium6, selenium7, selenium8, selenium9) #bind all corrected selenium data together by column
+```
+
+
+
+Fixes for temperature
+```{r}
+#high temperature in WEST LINE CREEK in 2013 identified as potential error; however, heat wave in BC that year likely explains high temperature
+
+temp_fig_data <- figure_data %>%
+  filter(PARAMETER_GENERAL == "Water Temperature") #only water temperature, not air temperature
+
+
+temp1 <- temp_fig_data %>% filter(MONITORING_LOCATION %in% c("ELK RIVER ABOVE BOIVIN CREEK", "ELK RIVER ABOVE GREENHILLS MINING OPERATION", "ELK RIVER ABOVE LIZARD CREEK", "LINE CREEK OPERATIONS - FORDING RIVER DOWNSTREAM OF DRY CREEK")) %>%  filter(PARAMETER == "Temperature") %>%  #sites selected manually after visual investigation of figures produced by code above. Potential errors identified where one data point was much warmer than water temperature could realistically be in the Elk River.
+  filter(VALUE > 20) #potential error was above 20
+temp1$CORRECTION_TYPE <-"Likely entering error"
+temp1$CORRECTION_VALUE <- NA
+temp1$CORRECTION_NOTES <- "Value is likely an entering error; however, unclear what correct value should be."
+temp1$CORRECTION_COLUMN <- "VALUE"
+
+
+temp3 <- temp_fig_data %>% filter(MONITORING_LOCATION == "BRANCH F @ LRP ROAD") %>% filter(VALUE > 500)
+temp3$CORRECTION_TYPE <- "Likely entering error"
+temp3$CORRECTION_VALUE <- temp3$VALUE/100
+temp3$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+temp3$CORRECTION_COLUMN <- "VALUE"
+
+temp_corr <- rbind(temp1, temp3)
+```
+
+
+
+
+Data fixes for flow
+```{r}
+flow <- all_data %>%
+  filter(grepl("flow", PARAMETER_GENERAL, ignore.case = TRUE)) #filter rows that contain "flow" in PARAMETER_GENERAL column
+
+
+flow1 <- flow %>% filter(MONITORING_LOCATION == "DRY CR. U/S HEADPOND  (LC_DC3)") %>% #site selected manually after visual investigation of figures produced by code above. Potential errors identified where one data point were greater than ~100x all other data points at that site.
+  filter(UNIT %in% c("m3/s W", "m3s W")) %>% 
+  filter(VALUE > 1) #value that likely errors were above
+flow1$CORRECTION_TYPE <- "Likely entering error"
+flow1$CORRECTION_VALUE <- flow1$VALUE/100
+flow1$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+flow1$CORRECTION_COLUMN <- "VALUE"
+
+
+flow2 <- flow %>% filter(MONITORING_LOCATION == "LINE CREEK OPERATION- CHAUNCEY CREEK") %>% #site selected manually after visual investigation of figures produced by code above. Potential errors identified where one data point were greater than ~10x all other data points at that site.
+  filter(UNIT %in% c("m3/s W", "m3s W")) %>% 
+  filter(VALUE > 10) #erroneous data point was above 10
+flow2$CORRECTION_TYPE <- "Likely entering error"
+flow2$CORRECTION_VALUE <- flow2$VALUE/10
+flow2$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+flow2$CORRECTION_COLUMN <- "VALUE"
+
+
+#change unit entered as "metres3 per second" to "m3/s" to be more appropriate and relateable to other data
+flow3 <- flow %>% filter(UNIT %in% c("metres3 per second", "m^3/s"))
+flow3$CORRECTION_TYPE <- "Incongruous unit"
+flow3$CORRECTION_VALUE <- "m3/s"
+flow3$CORRECTION_NOTES <- "Unit entered as metres3 per second. Changed to m3/s."
+flow3$CORRECTION_COLUMN <- "UNIT"
+
+
+flow4 <- flow %>% filter(MONITORING_LOCATION == "LINE CREEK OPERATIONS- UNNAMED CREEK") %>% #site selected manually after visual investigation of figures produced by code above. Potential errors identified where one data point were greater than ~10x all other data points at that site.
+  filter(UNIT %in% c("m3/s W", "m3s W")) %>% filter(VALUE > 1)
+flow4$CORRECTION_TYPE <- "Likely entering error"
+flow4$CORRECTION_VALUE <- flow4$VALUE/100
+flow4$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+flow4$CORRECTION_COLUMN <- "VALUE"
+
+
+
+
+flow_corr <- rbind(flow1, flow2, flow3, flow4) #bind all corrected flow data together by column
+```
+
+
+
+Fixes for turbidity
+```{r}
+turbidity <- figure_data %>%
+  filter(grepl("turbidity", PARAMETER_GENERAL, ignore.case = TRUE)) #filter by rows that contain "turbidity" in PARAMETER column
+
+#turbidity cannot be less than 0 - calibration issue, should be rounded to 0
+turb0 <-turbidity %>% filter(VALUE < 0)
+turb0$CORRECTION_TYPE <- "Calibration error"
+turb0$CORRECTION_VALUE <- NA
+turb0$CORRECTION_NOTES <- "Turbidity cannot be less than 0. No suggested correction given."
+turb0$CORRECTION_COLUMN <- "VALUE"
+
+
+#Remove rows with UNIT = "None", these are error readings from instrument
+turb1 <-turbidity %>% filter(UNIT == "None") 
+turb1$CORRECTION_TYPE <- "Instrument error"
+turb1$CORRECTION_VALUE <- NA
+turb1$CORRECTION_NOTES <- "Error code from instrument was entered (VALUE = 46, UNIT = None). Replaced values in unit, result_letter and value columns with NA."
+turb1$CORRECTION_COLUMN <- "VALUE" #also "RESULT_LETTER" and "UNIT"
+
+
+turb2 <- turbidity %>% filter(MONITORING_LOCATION %in% c("CORBIN CR U/S MICHEL CR", "ELK R. BELOW MICHEL C. AT C.P.R. ROADHOUSE")) %>% filter(VALUE > 1000) #potential errors were above 1000
+turb2$CORRECTION_TYPE <- "Likely entering error"
+turb2$CORRECTION_VALUE <- turb2$VALUE/10
+turb2$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+turb2$CORRECTION_COLUMN <- "VALUE" 
+
+
+turb3 <- turbidity %>% filter(MONITORING_LOCATION %in% c("HENRETTA CREEK U/S OF MCQUARRIE CREEK", "LINE CR RES; NORTH HORSESHOE CREEK", "LINE CREEK OPERATIONS - FORDING RIVER DOWNSTREAM OF DRY CREEK", "MICHEL CREEK D/S COAL MTN OPERATIONS", "SOUTH LINE CREEK")) %>%  
+  filter(VALUE > 280) #likely errors were above 280
+turb3$CORRECTION_TYPE <- "Likely entering error"
+turb3$CORRECTION_VALUE <- turb3$VALUE/10
+turb3$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+turb3$CORRECTION_COLUMN <- "VALUE" 
+
+
+turb4 <- turbidity %>% filter(MONITORING_LOCATION %in% c("PE-5353 LINE CREEK D/S OF SOUTH LINE CREEK CONFLUENCE")) %>% 
+  filter(VALUE > 1000)
+turb4$CORRECTION_TYPE <- "Likely entering error"
+turb4$CORRECTION_VALUE <- turb4$VALUE/100
+turb4$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+turb4$CORRECTION_COLUMN <- "VALUE" 
+
+
+turb5 <- turbidity %>% filter(MONITORING_LOCATION %in% c("SPRING CREEK U/S OF CONFLUENCE WITH AQUEDUCT CREEK (EVO)")) %>% 
+  filter(VALUE > 40)
+turb5$CORRECTION_TYPE <- "Likely entering error"
+turb5$CORRECTION_VALUE <- turb5$VALUE/10
+turb5$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+turb5$CORRECTION_COLUMN <- "VALUE" 
+
+
+turb6 <- turbidity %>% filter(MONITORING_LOCATION %in% c("WEST LINE CREEK")) %>% filter(VALUE > 400)
+turb6$CORRECTION_TYPE <- "Likely entering error"
+turb6$CORRECTION_VALUE <- turb6$VALUE/100
+turb6$CORRECTION_NOTES <- "Value is approximately two orders of magnitude greater than all other relevant data points; likely an entering error. Resolved by dividing by 100."
+turb6$CORRECTION_COLUMN <- "VALUE" 
+
+
+turb_corr <- rbind(turb0, turb1, turb2, turb3, turb4, turb5, turb6) #bind all corrected turbidity data together by column
+```
+
+
+
+
+Fixes for coliform bacteria
+```{r}
+ecoli1 <- figure_data %>% filter(PARAMETER == "E Coli") %>% filter(MONITORING_LOCATION %in% c("ELK RIVER ABOVE HIGHWAY 93")) %>% filter(VALUE > 800)
+ecoli1$CORRECTION_TYPE <- "Likely entering error"
+ecoli1$CORRECTION_VALUE <- ecoli1$VALUE/10
+ecoli1$CORRECTION_NOTES <- "Value is approximately one order of magnitude greater than all other relevant data points; likely entering error. Resolved by dividing by 10."
+ecoli1$CORRECTION_COLUMN <- "VALUE" 
+
+```
+
+
+
+Bind all corrected data together into one data set
+```{r}
+data_corr <- rbind(selenium_corr, temp_corr,flow_corr, turb_corr, ecoli1)
+
+#add column to indicate data has been quality checked
+data_corr$CHECK_COMPLETE <- "Y"
+
+
+```
+
+
+Write corrected data to csv
+```{r}
+write.csv(data_corr,"Consolidated_Data_Corrections_only.csv")
+```
+
+
+
+Append corrected data to original data set, write to csv
+```{r}
+#add column to indicate data has been quality checked
+all_data$CHECK_COMPLETE <- "Y"
+
+
+all_data$CORRECTION_COLUMN <- NA
+all_data$CORRECTION_VALUE <- NA
+all_data$CORRECTION_TYPE <- NA
+all_data$CORRECTION_NOTES <- NA
+
+all_data_corr <- rbind(data_corr, all_data)
+
+
+all_data_corr <- all_data_corr %>%
+  group_by(SITE_ID, MONITORING_LOCATION, DATE, VALUE, UNIT) %>% # group by the columns that define matching rows
+  mutate(CORRECTION_COLUMN = coalesce(CORRECTION_COLUMN, first(na.omit(CORRECTION_COLUMN))) ) %>%
+     mutate( CORRECTION_VALUE = coalesce(CORRECTION_VALUE, first(na.omit(CORRECTION_VALUE))) ) %>%
+   mutate( CORRECTION_TYPE = coalesce(CORRECTION_TYPE, first(na.omit(CORRECTION_TYPE))) ) %>%
+    mutate(CORRECTION_NOTES = coalesce(CORRECTION_NOTES, first(na.omit(CORRECTION_NOTES))) ) %>%
+
+  ungroup()
+
+
+all_data_corr <- all_data_corr %>%
+  group_by(SITE_ID, MONITORING_LOCATION, DATE, VALUE, UNIT) %>% 
+  fill(CORRECTION_COLUMN, CORRECTION_VALUE, CORRECTION_TYPE, CORRECTION_NOTES, .direction = "downup") %>%
+  ungroup()
+
+all_data_corr$...1 <- NULL
+
+all_data_corr <- all_data_corr[!duplicated(all_data_corr), ]
+
+write.csv(all_data_corr,"Consolidated_Data_Including_Corrections.csv")
+```
+
