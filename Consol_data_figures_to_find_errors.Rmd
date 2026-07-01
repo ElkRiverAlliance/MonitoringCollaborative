@@ -1,0 +1,114 @@
+---
+title: "Consolidated data figures to find errors"
+author: "AM"
+date: "2026-04-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Install required packages - only run this the first time running this code or to check for updates
+```{r}
+install.packages("readr")
+install.packages("dplyr")
+install.packages("ggplot2")
+```
+
+Load required packages
+```{r}
+library(readr)
+library(dplyr)
+library(ggplot2)
+library(piggyback)
+```
+
+
+Import data from csv
+```{r}
+all_data <- read.csv("./Consolidated Data-selected.csv") #load csv with consolidated data to data frame
+#data must be in .csv format and have the same name as above
+```
+
+
+Check that date is in POSIXct format
+```{r}
+ str(all_data$DATE)
+
+#run the below line only if DATE is not in POSIXct format
+#all_data$DATE<-as.POSIXct(as.character(all_data$DATE),format="%Y-%m-%d %H:%M:%S", tz = "")
+
+```
+
+
+
+Create figure data by removing data below detection limit to better visualize data and easier identify errors (eg. data that was entered as actual value but should have been entered as below detection limit)
+```{r}
+figure_data <- all_data %>% filter(!RESULT_LETTER %in% c("<")) 
+
+```
+
+
+Figures for desired parameters by site, general parameter, and unit. Use corrected monitoring location value (ERROR_TYPE) if it exists, and original monitoring location if no change has been made to monitoring location
+```{r}
+#include all desired parameters in this list
+param_general <- c("Turbidity", "Water Temperature", "Selenium Total", "Selenium Dissolved","Selenium Extractable","Flow", "Selenate","Selenite","Turbidity Field", "Fecal Bacteria", "Benthic Invertebrates")
+
+figure_data <- figure_data %>% 
+  filter(PARAMETER_GENERAL %in% param_general) 
+
+#remove "Selenium Extractable" from parameter list
+figure_data <- figure_data %>%  filter(PARAMETER != "Selenium Extractable") 
+
+param_list <- unique(figure_data$PARAMETER)
+param_list #check parameter list
+
+
+
+
+i=1 #establishing loop for parameter
+j=1 #establishing loop for site
+k=1 #establishing loop for unit
+
+
+for (i in 1:length(param_list)) { #loop for each parameter
+  
+  param <- figure_data %>% subset(PARAMETER == param_list[i]) #create data frame of figure data where value in PARAMETER column is param_list at i to loop through all values in param_list
+  site_list <- unique(param$MONITORING_LOCATION) #create list of all sites that have data for the parameter at position i
+  
+  for (j in 1:length(site_list)){ #loop for each site
+   
+  site <- param %>% subset(MONITORING_LOCATION == site_list[j]) #create data frame of parameter data where CORRECTION_VALUE = site_list at i to loop through all values in site_list
+  
+  unit_list <- unique(site$UNIT) #create list of all units that have data for PARAMETER at i and site at i
+  
+  
+       for (k in 1:length(units)) { #loop for each unit
+    
+    
+        param_site_unit <- site %>% subset(UNIT == unit_list[k]) #create data frame of parameter and site data where value in UNIT column is unit_list at i to loop through all units
+      
+        title <- paste(param_list[i],",", site_list[j],",", unit_list[k]) #create title for each figure in format PARAMETER, MONITORING LOCATION, UNIT
+    
+        param_plot <- ggplot(data = param_site_unit, mapping = aes(x = DATE, y = VALUE)) + geom_point() +
+        ggtitle(title) #create figure with data filtered above for each parameter, site, and unit
+    
+    
+        ggsave(path = paste0("Plots","/", param_list[i]) , filename = paste0(title, ".jpeg"), plot = param_plot, create.dir = TRUE) #save figure to folder as a jpeg file
+    
+       k <- k+1
+       
+  }
+
+  
+k=1  # after unit loop has run, reset unit loop to 1 (want to make figures for every applicable unit for each parameter and site)
+j=j+1 # after unit loop has run, set site to j+1 to move on to next site in site list
+
+  }
+  j=1 # after site loop has run for all sites for parameter at i, reset site loop to 1 (want to make figures for every applicable site for each parameter)
+
+  i=i+1 # after site loop has run, set parameter to i+1 to move on to next parameter in parameter list
+}
+
+```
