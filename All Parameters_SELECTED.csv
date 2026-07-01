@@ -1,0 +1,561 @@
+,PARAMETER,DATA_REPOSITORY,INCLUDE,PARAMETER_GENERAL
+1662420,Alkalinity,Columbia Basin Waterhub,1,Alkalinity Total
+59,Alkalinity Total 4.5 (as CaCO3),Environmental Monitoring System,1,Alkalinity Total 4.5 (as CaCO3)
+1661368,"Alkalinity, Total (as CaCO3)",Columbia Basin Waterhub,1,Alkalinity Total
+64767,Alkalinity:Total,Environmental Monitoring System,1,Alkalinity Total
+1662636,Aluminum,Columbia Basin Waterhub,2,Aluminum Total
+344,Aluminum Dissolved,Environmental Monitoring System,2,Aluminum Dissolved
+133,Aluminum Total,Environmental Monitoring System,2,Aluminum Total
+1988931,Aluminum Total,CABIN,2,Aluminum Total
+1661331,"Aluminum, dissolved",Columbia Basin Waterhub,2,Aluminum Dissolved
+1661379,"Aluminum, total",Columbia Basin Waterhub,2,Aluminum Total
+1661629,"Aluminum, Total",Columbia Basin Waterhub,2,Aluminum Total
+1662034,"Alumnim, Total",Columbia Basin Waterhub,2,Aluminum Total
+1988942,Ammonia,CABIN,2,Ammonia Total
+1661373,"Ammonia, Total (as N)",Columbia Basin Waterhub,2,Ammonia Total
+1993455,Ammonium,CABIN,1,Ammonium
+1662642,Antimony,Columbia Basin Waterhub,1,Antimony Total
+15,Antimony Dissolved,Environmental Monitoring System,1,Antimony Dissolved
+65,Antimony Total,Environmental Monitoring System,1,Antimony Total
+1988964,Antimony Total,CABIN,1,Antimony Total
+1661332,"Antimony, dissolved",Columbia Basin Waterhub,1,Antimony Dissolved
+1661380,"Antimony, total",Columbia Basin Waterhub,1,Antimony Total
+1661630,"Antimony, Total",Columbia Basin Waterhub,1,Antimony Total
+1662648,Arsenic,Columbia Basin Waterhub,1,Arsenic Total
+121,Arsenic Dissolved,Environmental Monitoring System,1,Arsenic Dissolved
+48,Arsenic Total,Environmental Monitoring System,1,Arsenic Total
+1988927,Arsenic Total,CABIN,1,Arsenic Total
+1661333,"Arsenic, dissolved",Columbia Basin Waterhub,1,Arsenic Dissolved
+1661381,"Arsenic, total",Columbia Basin Waterhub,1,Arsenic Total
+1661631,"Arsenic, Total",Columbia Basin Waterhub,1,Arsenic Total
+1662654,Barium,Columbia Basin Waterhub,1,Barium Total
+135,Barium Dissolved,Environmental Monitoring System,1,Barium Dissolved
+75,Barium Total,Environmental Monitoring System,1,Barium Total
+1988963,Barium Total,CABIN,1,Barium Total
+1661334,"Barium, dissolved",Columbia Basin Waterhub,1,Barium Dissolved
+1661382,"Barium, total",Columbia Basin Waterhub,1,Barium Total
+1661632,"Barium, Total",Columbia Basin Waterhub,1,Barium Total
+1988076,Benthic Invertebrates,CABIN,2,Benthic Invertebrates
+1662660,Beryllium,Columbia Basin Waterhub,1,Beryllium Total
+178,Beryllium Dissolved,Environmental Monitoring System,1,Beryllium Dissolved
+78,Beryllium Total,Environmental Monitoring System,1,Beryllium Total
+1988955,Beryllium Total,CABIN,1,Beryllium Total
+1661335,"Beryllium, dissolved",Columbia Basin Waterhub,1,Beryllium Dissolved
+1661383,"Beryllium, total",Columbia Basin Waterhub,1,Beryllium Total
+1661633,"Beryllium, Total",Columbia Basin Waterhub,1,Beryllium Total
+1992043,Bicarbonate,CABIN,1,Bicarbonate
+1662426,Bicarbonate,Columbia Basin Waterhub,1,Bicarbonate
+95104,Bicarbonate Alkalinity (as CaCO3),Environmental Monitoring System,1,Bicarbonate
+1662666,Bismuth,Columbia Basin Waterhub,1,Bismuth Total
+175,Bismuth Dissolved,Environmental Monitoring System,1,Bismuth Dissolved
+39,Bismuth Total,Environmental Monitoring System,1,Bismuth Total
+1988956,Bismuth Total,CABIN,1,Bismuth Total
+1661336,"Bismuth, dissolved",Columbia Basin Waterhub,1,Bismuth Dissolved
+1661384,"Bismuth, total",Columbia Basin Waterhub,1,Bismuth Total
+1661634,"Bismuth, Total",Columbia Basin Waterhub,1,Bismuth Total
+1662672,Boron,Columbia Basin Waterhub,1,Boron Total
+172,Boron Dissolved,Environmental Monitoring System,1,Boron Dissolved
+294,Boron Total,Environmental Monitoring System,1,Boron Total
+1988959,Boron Total,CABIN,1,Boron Total
+1661337,"Boron, dissolved",Columbia Basin Waterhub,1,Boron Dissolved
+1661385,"Boron, total",Columbia Basin Waterhub,1,Boron Total
+1661635,"Boron, Total",Columbia Basin Waterhub,1,Boron Total
+130193,Bromate Dissolved,Environmental Monitoring System,1,Bromate Dissolved
+1661515,Bromide,Columbia Basin Waterhub,1,Bromide
+1988958,Bromide,CABIN,1,Bromide
+134,Bromide Dissolved,Environmental Monitoring System,1,Bromide Dissolved
+1662678,Cadmium,Columbia Basin Waterhub,1,Cadmium Total
+74,Cadmium Dissolved,Environmental Monitoring System,1,Cadmium Dissolved
+35,Cadmium Total,Environmental Monitoring System,1,Cadmium Total
+1988934,Cadmium Total,CABIN,1,Cadmium Total
+1661338,"Cadmium, dissolved",Columbia Basin Waterhub,1,Cadmium Dissolved
+1661386,"Cadmium, total",Columbia Basin Waterhub,1,Cadmium Total
+1661636,"Cadmium, Total",Columbia Basin Waterhub,1,Cadmium Total
+1662684,Calcium,Columbia Basin Waterhub,2,Calcium Total
+1988936,Calcium,CABIN,2,Calcium Total
+22,Calcium Dissolved,Environmental Monitoring System,2,Calcium Dissolved
+341,Calcium Total,Environmental Monitoring System,2,Calcium Total
+1661339,"Calcium, dissolved",Columbia Basin Waterhub,2,Calcium Dissolved
+1661387,"Calcium, total",Columbia Basin Waterhub,2,Calcium Total
+1661657,"Calcium, Total",Columbia Basin Waterhub,2,Calcium Total
+1221,Carbon Dissolved Inorganic,Environmental Monitoring System,2,Carbon Dissolved Inorganic
+231,Carbon Dissolved Organic,Environmental Monitoring System,2,Carbon Dissolved Organic
+1894,Carbon Total,Environmental Monitoring System,2,Carbon Total
+180,Carbon Total Dissolved,Environmental Monitoring System,2,Carbon Total Dissolved
+256,Carbon Total Inorganic,Environmental Monitoring System,2,Carbon Total Inorganic
+408,Carbon Total Organic,Environmental Monitoring System,2,Carbon Total Organic
+1661473,"Carbon, Dissolved Organic",Columbia Basin Waterhub,2,Carbon Dissolved Organic
+1661472,"Carbon, Total Organic",Columbia Basin Waterhub,2,Carbon Total Organic
+1662429,Carbonate,Columbia Basin Waterhub,1,Carbonate
+1992055,Carbonate,CABIN,1,Carbonate
+94763,Carbonate Alkalinity (as CaCO3),Environmental Monitoring System,1,Carbonate Alkalinity (as CaCO3)
+194,Cerium Total,Environmental Monitoring System,1,Cerium Total
+166,Cesium Dissolved,Environmental Monitoring System,1,Cesium Dissolved
+481,Cesium Total,Environmental Monitoring System,1,Cesium Total
+1661417,Chloride,Columbia Basin Waterhub,2,Chloride Total
+110,Chloride Dissolved,Environmental Monitoring System,2,Chloride Dissolved
+58730,Chloride Total,Environmental Monitoring System,2,Chloride Total
+1662690,Chromium,Columbia Basin Waterhub,1,Chromium Total
+286,Chromium Dissolved,Environmental Monitoring System,1,Chromium Dissolved
+164,Chromium Total,Environmental Monitoring System,1,Chromium Total
+1988945,Chromium Total,CABIN,1,Chromium Total
+1661340,"Chromium, dissolved",Columbia Basin Waterhub,1,Chromium Dissolved
+1661388,"Chromium, total",Columbia Basin Waterhub,1,Chromium Total
+1661637,"Chromium, Total",Columbia Basin Waterhub,1,Chromium Total
+1662043,"Cobal, Total",Columbia Basin Waterhub,1,Cobalt Total
+1662696,Cobalt,Columbia Basin Waterhub,1,Cobalt Total
+36,Cobalt Dissolved,Environmental Monitoring System,1,Cobalt Dissolved
+56,Cobalt Total,Environmental Monitoring System,1,Cobalt Total
+1988957,Cobalt Total,CABIN,1,Cobalt Total
+1661341,"Cobalt, dissolved",Columbia Basin Waterhub,1,Cobalt Dissolved
+1661389,"Cobalt, total",Columbia Basin Waterhub,1,Cobalt Total
+1661638,"Cobalt, Total",Columbia Basin Waterhub,1,Cobalt Total
+283,Coliform - Fecal,Environmental Monitoring System,2,Coliform Fecal
+8810,Coliform - Total,Environmental Monitoring System,2,Coliform Total
+1988933,Conductivity,CABIN,2,Conductivity
+1662702,Copper,Columbia Basin Waterhub,1,Copper Total
+179,Copper Dissolved,Environmental Monitoring System,1,Copper Dissolved
+14,Copper Total,Environmental Monitoring System,1,Copper Total
+1988929,Copper Total,CABIN,1,Copper Total
+1661342,"Copper, dissolved",Columbia Basin Waterhub,1,Copper Dissolved
+1661390,"Copper, total",Columbia Basin Waterhub,1,Copper Total
+1661639,"Copper,Total",Columbia Basin Waterhub,1,Copper Total
+1650683,Discharge,BC Data Catalogue,2,Flow
+1662840,Discharge,Columbia Basin Waterhub,2,Flow
+1988950,Dissolved Chloride,CABIN,1,Chloride Dissolved
+1992625,Dissolved Inorganic Carbon,CABIN,2,Carbon Dissolved Inorganic
+1697046,Dissolved Nitrate (NO3),Columbia Basin Waterhub,2,Nitrate Dissolved
+1697048,Dissolved Nitrite (NO2),Columbia Basin Waterhub,2,Nitrite Dissolved
+1990182,Dissolved Organic Carbon,CABIN,2,Carbon Dissolved Organic
+1988961,Dissolved Oxygen,CABIN,2,Oxygen Dissolved
+86,E Coli,Environmental Monitoring System,2,E Coli
+1662024,E.Coli DST,Columbia Basin Waterhub,2,E Coli
+1461414,Flow,Water Survey Canada,2,Flow
+65026,Flow (Avg),Environmental Monitoring System,2,Flow
+1661517,Fluoride,Columbia Basin Waterhub,1,Fluoride Total
+1989705,Fluoride,CABIN,1,Fluoride Total
+52,Fluoride Dissolved,Environmental Monitoring System,1,Fluoride Dissolved
+255,Fluoride Total,Environmental Monitoring System,1,Fluoride Total
+44,Gallium Dissolved,Environmental Monitoring System,1,Gallium Dissolved
+573,Gallium Total,Environmental Monitoring System,1,Gallium Total
+1662578,Hardness,Columbia Basin Waterhub,1,Hardness
+1988939,Hardness (calculated as CaCO3),CABIN,1,Hardness
+1,Hardness (Dissolved) (as CaCO3),Environmental Monitoring System,1,Hardness
+1661327,"Hardness, Total (as CaCO3)",Columbia Basin Waterhub,1,Hardness
+1662708,Iron,Columbia Basin Waterhub,2,Iron Total
+276,Iron Dissolved,Environmental Monitoring System,2,Iron Dissolved
+144,Iron Total,Environmental Monitoring System,2,Iron Total
+1988930,Iron Total,CABIN,2,Iron Total
+1661343,"Iron, dissolved",Columbia Basin Waterhub,2,Iron Dissolved
+1661391,"Iron, total",Columbia Basin Waterhub,2,Iron Total
+1661640,"Iron, Total",Columbia Basin Waterhub,2,Iron Total
+1662714,Lead,Columbia Basin Waterhub,2,Lead Total
+275,Lead Dissolved,Environmental Monitoring System,2,Lead Dissolved
+60,Lead Total,Environmental Monitoring System,2,Lead Total
+1988938,Lead Total,CABIN,2,Lead Total
+1661344,"Lead, dissolved",Columbia Basin Waterhub,2,Lead Dissolved
+1661392,"Lead, total",Columbia Basin Waterhub,2,Lead Total
+1661641,"Lead, Total",Columbia Basin Waterhub,2,Lead Total
+1662720,Lithium,Columbia Basin Waterhub,2,Lithium Total
+12,Lithium Dissolved,Environmental Monitoring System,2,Lithium Dissolved
+63,Lithium Total,Environmental Monitoring System,2,Lithium Total
+1988943,Lithium Total,CABIN,2,Lithium Total
+1661330,"Lithium, dissolved",Columbia Basin Waterhub,2,Lithium Dissolved
+1661393,"Lithium, total",Columbia Basin Waterhub,2,Lithium Total
+1661642,"Lithium, Total",Columbia Basin Waterhub,2,Lithium Total
+1662726,Magnesium,Columbia Basin Waterhub,1,Magnesium Total
+1988932,Magnesium,CABIN,1,Magnesium Total
+92,Magnesium Dissolved,Environmental Monitoring System,1,Magnesium Dissolved
+1650,Magnesium Total,Environmental Monitoring System,1,Magnesium Total
+1661345,"Magnesium, dissolved",Columbia Basin Waterhub,1,Magnesium Dissolved
+1661394,"Magnesium, total",Columbia Basin Waterhub,1,Magnesium Total
+1661658,"Magnesium, Total",Columbia Basin Waterhub,1,Magnesium Total
+1662732,Manganese,Columbia Basin Waterhub,1,Manganese Total
+399,Manganese Dissolved,Environmental Monitoring System,1,Manganese Dissolved
+7,Manganese Total,Environmental Monitoring System,1,Manganese Total
+1988951,Manganese Total,CABIN,1,Manganese Total
+1661346,"Manganese, dissolved",Columbia Basin Waterhub,1,Manganese Dissolved
+1661395,"Manganese, total",Columbia Basin Waterhub,1,Manganese Total
+1661643,"Manganese, Total",Columbia Basin Waterhub,1,Manganese Total
+1662738,Mercury,Columbia Basin Waterhub,2,Mercury Total
+64464,Mercury Dissolved,Environmental Monitoring System,2,Mercury Dissolved
+51,Mercury Total,Environmental Monitoring System,2,Mercury Total
+1991127,Mercury Total,CABIN,2,Mercury Total
+1661347,"Mercury, dissolved",Columbia Basin Waterhub,2,Mercury Dissolved
+1661396,"Mercury, total",Columbia Basin Waterhub,2,Mercury Total
+1662049,"Mercury, Total",Columbia Basin Waterhub,2,Mercury Total
+1662744,Molybdenum,Columbia Basin Waterhub,1,Molybdenum Total
+94,Molybdenum Dissolved,Environmental Monitoring System,1,Molybdenum Dissolved
+68,Molybdenum Total,Environmental Monitoring System,1,Molybdenum Total
+1988921,Molybdenum Total,CABIN,1,Molybdenum Total
+1661348,"Molybdenum, dissolved",Columbia Basin Waterhub,1,Molybdenum Dissolved
+1661397,"Molybdenum, total",Columbia Basin Waterhub,1,Molybdenum Total
+1661644,"Molybdenum, Total",Columbia Basin Waterhub,1,Molybdenum Total
+1662750,Nickel,Columbia Basin Waterhub,1,Nickel Total
+72,Nickel Dissolved,Environmental Monitoring System,1,Nickel Dissolved
+2,Nickel Total,Environmental Monitoring System,1,Nickel Total
+1988922,Nickel Total,CABIN,1,Nickel Total
+1661349,"Nickel, dissolved",Columbia Basin Waterhub,1,Nickel Dissolved
+1661398,"Nickel, total",Columbia Basin Waterhub,1,Nickel Total
+1661645,"Nickel, Total",Columbia Basin Waterhub,1,Nickel Total
+1662417,Nitrate,Columbia Basin Waterhub,2,Nitrate (NO3) Total
+1988949,Nitrate,CABIN,2,Nitrate (NO3) Total
+1661418,Nitrate (as N),Columbia Basin Waterhub,2,Nitrate (NO3) Total
+204,Nitrate (NO3) Dissolved,Environmental Monitoring System,2,Nitrate (NO3) Dissolved
+17,Nitrate(NO3) + Nitrite(NO2) Dissolved,Environmental Monitoring System,2,Nitrate(NO3) + Nitrite(NO2) Dissolved
+1662068,"Nitrate, dissolved (as NO3)",Columbia Basin Waterhub,2,Nitrate (NO3) Dissolved
+1662435,Nitrate+Nitrite,Columbia Basin Waterhub,2,Nitrate(NO3) + Nitrite(NO2) Dissolved
+1661328,Nitrate+Nitrite (as N),Columbia Basin Waterhub,2,Nitrate(NO3) + Nitrite(NO2) Dissolved
+1988917,Nitrite,CABIN,2,Nitrite Dissolved
+1662414,Nitrite,Columbia Basin Waterhub,2,Nitrite (NO2) Total
+1661324,Nitrite (as N),Columbia Basin Waterhub,2,Nitrite (NO2) Total
+1662014,"Nitrite, dissolved (as NO2)",Columbia Basin Waterhub,2,Nitrite (NO2) Total
+1662598,Nitrogen,Columbia Basin Waterhub,2,Nitrogen Total
+205,Nitrogen - Nitrite Dissolved (NO2),Environmental Monitoring System,2,Nitrite (NO2) Dissolved
+151,Nitrogen Ammonia Dissolved,Environmental Monitoring System,2,Nitrogen Ammonia Dissolved
+126,Nitrogen Ammonia Total,Environmental Monitoring System,2,Nitrogen Ammonia Total
+417,Nitrogen NO2 Total,Environmental Monitoring System,2,Nitrite (NO2) Total
+1025,Nitrogen NO3 Total,Environmental Monitoring System,2,Nitrate (NO3) Total
+89,Nitrogen Organic Total Dissolved,Environmental Monitoring System,2,Nitrogen Organic Total Dissolved
+183,Nitrogen Organic-Total,Environmental Monitoring System,2,Nitrogen Organic-Total
+54,Nitrogen Total,Environmental Monitoring System,2,Nitrogen Total
+62,Nitrogen Total Dissolved,Environmental Monitoring System,2,Nitrogen Total Dissolved
+1661329,"Nitrogen, Total",Columbia Basin Waterhub,2,Nitrogen Total
+1988937,Nitrogen-Nitrate+Nitrite,CABIN,2,Nitrate(NO3) + Nitrite(NO2) Total
+1662453,Oxygen,Columbia Basin Waterhub,2,Oxygen
+409,Oxygen Dissolved,Environmental Monitoring System,2,Oxygen
+34,pH,Environmental Monitoring System,2,pH
+1662015,pH,Columbia Basin Waterhub,2,pH
+1988952,pH,CABIN,2,pH
+1662438,Phosphate,Columbia Basin Waterhub,1,Phosphate
+1661325,Phosphate (as P),Columbia Basin Waterhub,1,Phosphate
+1662584,Phosphorus,Columbia Basin Waterhub,2,Phosphorus Total
+8,Phosphorus Total,Environmental Monitoring System,2,Phosphorus Total
+249,Phosphorus Total Dissolved,Environmental Monitoring System,2,Phosphorus Total Dissolved
+1661350,"Phosphorus, dissolved",Columbia Basin Waterhub,2,"Phosphorus, dissolved"
+1661399,"Phosphorus, total",Columbia Basin Waterhub,2,Phosphorus Total
+1661377,"Phosphorus, Total (as P)",Columbia Basin Waterhub,2,Phosphorus Total
+1662756,Potassium,Columbia Basin Waterhub,1,Potassium Total
+1988946,Potassium,CABIN,1,Potassium Total
+239,Potassium Dissolved,Environmental Monitoring System,1,Potassium Dissolved
+62324,Potassium Total,Environmental Monitoring System,1,Potassium Total
+1661351,"Potassium, dissolved",Columbia Basin Waterhub,1,Potassium Dissolved
+1661400,"Potassium, total",Columbia Basin Waterhub,1,Potassium Total
+1661659,"Potassium, Total",Columbia Basin Waterhub,1,Potassium Total
+1662762,Selenium,Columbia Basin Waterhub,2,Selenium Total
+25,Selenium Dissolved,Environmental Monitoring System,2,Selenium Dissolved
+43,Selenium Total,Environmental Monitoring System,2,Selenium Total
+1988924,Selenium Total,CABIN,2,Selenium Total
+1661352,"Selenium, dissolved",Columbia Basin Waterhub,2,Selenium Dissolved
+1661401,"Selenium, total",Columbia Basin Waterhub,2,Selenium Total
+1661646,"Selenium, Total",Columbia Basin Waterhub,2,Selenium Total
+1662768,Silicon,Columbia Basin Waterhub,1,Silicon Total
+1989695,Silicon,CABIN,1,Silicon Total
+252,Silicon Dissolved,Environmental Monitoring System,1,Silicon Dissolved
+64649,Silicon Total,Environmental Monitoring System,1,Silicon Total
+1661353,"Silicon, dissolved",Columbia Basin Waterhub,1,Silicon Dissolved
+1661402,"Silicon, total",Columbia Basin Waterhub,1,Silicon Total
+1661647,"Silicon, Total",Columbia Basin Waterhub,1,Silicon Total
+1662774,Silver,Columbia Basin Waterhub,1,Silver Total
+433,Silver Dissolved,Environmental Monitoring System,1,Silver Dissolved
+31,Silver Total,Environmental Monitoring System,1,Silver Total
+1988948,Silver Total,CABIN,1,Silver Total
+1661354,"Silver, dissolved",Columbia Basin Waterhub,1,Silver Dissolved
+1661403,"Silver, total",Columbia Basin Waterhub,1,Silver Total
+1661648,"Silver, Total",Columbia Basin Waterhub,1,Silver Total
+1662780,Sodium,Columbia Basin Waterhub,1,Sodium Total
+1988947,Sodium,CABIN,1,Sodium Total
+232,Sodium Dissolved,Environmental Monitoring System,1,Sodium Dissolved
+62014,Sodium Total,Environmental Monitoring System,1,Sodium Total
+1661355,"Sodium, dissolved",Columbia Basin Waterhub,1,Sodium Dissolved
+1661404,"Sodium, total",Columbia Basin Waterhub,1,Sodium Total
+1661660,"Sodium, Total",Columbia Basin Waterhub,1,Sodium Total
+1662601,Solids,Columbia Basin Waterhub,2,Solids Total Suspended
+1661574,"Solids, Total Suspended",Columbia Basin Waterhub,2,Solids Total Suspended
+1661322,"Solids, Total Suspended ",Columbia Basin Waterhub,2,Solids Total Suspended
+10,Specific Conductance,Environmental Monitoring System,1,Specific Conductance
+1662473,specific conductivity,Columbia Basin Waterhub,1,Specific Conductance
+1662786,Strontium,Columbia Basin Waterhub,1,Strontium Total
+5,Strontium Dissolved,Environmental Monitoring System,1,Strontium Dissolved
+6,Strontium Total,Environmental Monitoring System,1,Strontium Total
+1988944,Strontium Total,CABIN,1,Strontium Total
+1661356,"Strontium, dissolved",Columbia Basin Waterhub,1,Strontium Dissolved
+1661405,"Strontium, total",Columbia Basin Waterhub,1,Strontium Total
+1661649,"Strontium, Total",Columbia Basin Waterhub,1,Strontium Total
+1661326,Sulfate,Columbia Basin Waterhub,2,Sulfate Total
+49,Sulfate Dissolved,Environmental Monitoring System,2,Sulfide Dissolved
+275479,Sulfate Total,Environmental Monitoring System,2,Sulfate Total
+174293,Sulfide Dissolved,Environmental Monitoring System,2,Sulfide Dissolved
+60182,Sulfide Total,Environmental Monitoring System,2,Sulfide Total
+1662792,Sulfur,Columbia Basin Waterhub,2,Sulfur Total
+1988923,Sulfur,CABIN,2,Sulfur Total
+3,Sulfur Dissolved,Environmental Monitoring System,2,Sulfur Dissolved
+61150,Sulfur Total,Environmental Monitoring System,2,Sulfur Total
+1661357,"Sulfur, dissolved",Columbia Basin Waterhub,2,Sulfur Dissolved
+1661406,"Sulfur, total",Columbia Basin Waterhub,2,Sulfur Total
+1988925,Sulphate,CABIN,2,Sulfate Total
+1661661,"Sulphur, Total",Columbia Basin Waterhub,2,Sulfur Total
+1296444,Tellerium Dissolved,Environmental Monitoring System,1,Tellerium Dissolved
+712647,Tellurium Total,Environmental Monitoring System,1,Tellurium Total
+1993195,Tellurium Total,CABIN,1,Tellurium Total
+1661358,"Tellurium, dissolved",Columbia Basin Waterhub,1,Tellerium Dissolved
+1661407,"Tellurium, total",Columbia Basin Waterhub,1,Tellurium Total
+16,Temperature,Environmental Monitoring System,2,Temperature
+1662536,Temperature,Columbia Basin Waterhub,2,Temperature
+146,Temperature-Field,Environmental Monitoring System,2,Temperature
+1662798,Thallium,Columbia Basin Waterhub,1,Thallium Total
+654,Thallium Dissolved,Environmental Monitoring System,,Thallium Dissolved
+317,Thallium Total,Environmental Monitoring System,1,Thallium Total
+1988954,Thallium Total,CABIN,1,Thallium Total
+1661359,"Thallium, dissolved",Columbia Basin Waterhub,1,Thallium Dissolved
+1661408,"Thallium, total",Columbia Basin Waterhub,1,Thallium Total
+1661650,"Thallium, Total",Columbia Basin Waterhub,1,Thallium Total
+1296446,Thorium Dissolved,Environmental Monitoring System,1,Thorium Dissolved
+1296447,Thorium Total,Environmental Monitoring System,1,Thorium Total
+1993177,Thorium Total,CABIN,1,Thorium Total
+1661360,"Thorium, dissolved",Columbia Basin Waterhub,1,Thorium Dissolved
+1661409,"Thorium, total",Columbia Basin Waterhub,1,Thorium Total
+1662804,Tin,Columbia Basin Waterhub,1,Tin Total
+327,Tin Dissolved,Environmental Monitoring System,1,Tin Dissolved
+212,Tin Total,Environmental Monitoring System,1,Tin Total
+1989047,Tin Total,CABIN,1,Tin Total
+1661361,"Tin, dissolved",Columbia Basin Waterhub,1,Tin Dissolved
+1661410,"Tin, total",Columbia Basin Waterhub,1,Tin Total
+1661651,"Tin, Total",Columbia Basin Waterhub,1,Tin Total
+1662810,Titanium,Columbia Basin Waterhub,1,Titanium Total
+851,Titanium Dissolved,Environmental Monitoring System,1,Titanium Dissolved
+63338,Titanium Total,Environmental Monitoring System,1,Titanium Total
+1989760,Titanium Total,CABIN,1,Titanium Total
+1661362,"Titanium, dissolved",Columbia Basin Waterhub,1,Titanium Dissolved
+1661411,"Titanium, total",Columbia Basin Waterhub,1,Titanium Total
+1661652,"Titanium, Total",Columbia Basin Waterhub,1,Titanium Total
+1988960,Total Alkalinity to 4.5,CABIN,1,Alkalinity Total 4.5 (as CaCO3)
+1992283,Total Chloride,CABIN,1,Chloride Total
+1662025,Total Coliforms DST,Columbia Basin Waterhub,1,Coliform Total
+1990946,Total Dissolved Nitrogen,CABIN,2,Nitrogen Total Dissolved
+1989252,Total Dissolved Phosphorus,CABIN,2,Phosphorus Total Dissolved
+1989265,Total Nitrogen,CABIN,2,Nitrogen Total
+301,Total Nitrogen NO2 + NO3,Environmental Monitoring System,2,Nitrate(NO3) + Nitrite(NO2) Total
+1989282,Total Organic Carbon,CABIN,2,Carbon Total Organic
+1989253,Total Organic Nitrogen,CABIN,2,Nitrogen Total Organic
+1988918,Total Phosphorus,CABIN,2,Phosphorus Total
+1988953,Total Suspended Solids,CABIN,2,Solids Total Suspended
+358,Tungsten Dissolved,Environmental Monitoring System,1,Tungsten Total
+46,Tungsten Total,Environmental Monitoring System,1,Tungsten Dissolved
+1661363,"Tungsten, dissolved",Columbia Basin Waterhub,1,Tungsten Dissolved
+1661412,"Tungsten, total",Columbia Basin Waterhub,1,Tungsten Total
+11,Turbidity,Environmental Monitoring System,2,Turbidity
+1662515,Turbidity,Columbia Basin Waterhub,2,Turbidity
+1988920,Turbidity,CABIN,2,Turbidity
+173921,Turbidity-Field,Environmental Monitoring System,2,Turbidity
+174250,Turbidity-Field	,Environmental Monitoring System,2,Turbidity
+1662816,Uranium,Columbia Basin Waterhub,1,Uranium Total
+23,Uranium Dissolved,Environmental Monitoring System,1,Uranium Dissolved
+147,Uranium Total,Environmental Monitoring System,1,Uranium Total
+1988928,Uranium Total,CABIN,1,Uranium Total
+1661364,"Uranium, dissolved",Columbia Basin Waterhub,1,Uranium Dissolved
+1661413,"Uranium, total",Columbia Basin Waterhub,1,Uranium Total
+1661653,"Uranium, Total",Columbia Basin Waterhub,1,Uranium Total
+1662822,Vanadium,Columbia Basin Waterhub,1,Vanadium Total
+109,Vanadium Dissolved,Environmental Monitoring System,1,Vanadium Dissolved
+111,Vanadium Total,Environmental Monitoring System,1,Vanadium Total
+1988935,Vanadium Total,CABIN,1,Vanadium Total
+1661365,"Vanadium, dissolved",Columbia Basin Waterhub,1,Vanadium Dissolved
+1661414,"Vanadium, total",Columbia Basin Waterhub,1,Vanadium Total
+1661654,"Vanadium, Total",Columbia Basin Waterhub,1,Vanadium Total
+1662828,Zinc,Columbia Basin Waterhub,2,Zinc Total
+196,Zinc Dissolved,Environmental Monitoring System,2,Zinc Dissolved
+61,Zinc Total,Environmental Monitoring System,2,Zinc Total
+1988940,Zinc Total,CABIN,2,Zinc Total
+1661366,"Zinc, dissolved",Columbia Basin Waterhub,2,Zinc Dissolved
+1661415,"Zinc, total",Columbia Basin Waterhub,2,Zinc Total
+1661655,"Zinc, Total",Columbia Basin Waterhub,2,Zinc Total
+1662834,Zirconium,Columbia Basin Waterhub,1,Zirconium Total
+737440,Zirconium Dissolved,Environmental Monitoring System,1,Zirconium Dissolved
+156991,Zirconium Total,Environmental Monitoring System,1,Zirconium Total
+1990074,Zirconium Total,CABIN,1,Zirconium Total
+1661367,"Zirconium, dissolved",Columbia Basin Waterhub,1,Zirconium Dissolved
+1661416,"Zirconium, total",Columbia Basin Waterhub,1,Zirconium Total
+1661656,"Zirconium, Total",Columbia Basin Waterhub,1,Zirconium Total
+184359,2-Methylnaphthalene,Environmental Monitoring System,,
+173904,Acenaphthene,Environmental Monitoring System,,
+180146,Acenaphthylene,Environmental Monitoring System,,
+72988,Acidity pH 8.3 (as CaCO3),Environmental Monitoring System,,
+174107,Acridine,Environmental Monitoring System,,
+1988941,Air Temperature,CABIN,,
+550,Alkalinity Diss. 4.5,Environmental Monitoring System,,
+8909,Alkalinity pH 4.5/4.2,Environmental Monitoring System,,
+1661370,"Alkalinity, Bicarbonate (as CaCO3)",Columbia Basin Waterhub,,
+1661371,"Alkalinity, Carbonate (as CaCO3)",Columbia Basin Waterhub,,
+1661372,"Alkalinity, Hydroxide (as CaCO3)",Columbia Basin Waterhub,,
+1661369,"Alkalinity, Phenolphthalein (as CaCO3)",Columbia Basin Waterhub,,
+140,Alkalinity; Phenolphthalein (as CaCO3),Environmental Monitoring System,,
+2062,Aluminum Extractable,Environmental Monitoring System,,
+174132,Anthracene,Environmental Monitoring System,,
+3039,Antimony-Extractable,Environmental Monitoring System,,
+4890,Arsenic Extractable,Environmental Monitoring System,,
+12789,Barium Extractable,Environmental Monitoring System,,
+328,Barometric Press.,Environmental Monitoring System,,
+174177,Benzo(a)anthracene,Environmental Monitoring System,,
+174595,Benzo(a)pyrene,Environmental Monitoring System,,
+193772,Benzo(b+j)fluoranthene,Environmental Monitoring System,,
+186237,Benzo(g;h;i)perylene,Environmental Monitoring System,,
+204343,Benzo(k)fluoranthene,Environmental Monitoring System,,
+3675,Beryllium Extractable,Environmental Monitoring System,,
+191520,Bio. LC20:Fish,Environmental Monitoring System,,
+190732,Bio. LC50:Daphnia Magna,Environmental Monitoring System,,
+194150,Bio. LC50:Fish,Environmental Monitoring System,,
+99047,Bioassay(Pass/Fail):Daphnia Magna,Environmental Monitoring System,,
+67033,Biochemical Oxygen Demand,Environmental Monitoring System,,
+266775,Biomass;dry wt @105C,Environmental Monitoring System,,
+266792,Biomass;fixed @ 550C,Environmental Monitoring System,,
+11001,Bismuth Extractable,Environmental Monitoring System,,
+1661374,"BOD, 5-day",Columbia Basin Waterhub,,
+3784,Boron Extractable,Environmental Monitoring System,,
+427242,Bromide Extractable,Environmental Monitoring System,,
+454,Cadmium Extractable,Environmental Monitoring System,,
+250,Calcium Extractable,Environmental Monitoring System,,
+505,Cerium Dissolved,Environmental Monitoring System,,
+8267,Cerium Extractable,Environmental Monitoring System,,
+6749,Cesium Extractable,Environmental Monitoring System,,
+737464,Chemical Oxygen Demand,Environmental Monitoring System,,
+1661375,Chemical Oxygen Demand,Columbia Basin Waterhub,,
+174322,Chemical Oxygen Demand - Soluble,Environmental Monitoring System,,
+61318,Chlorophyll A,Environmental Monitoring System,,
+1046,Chromium Extractable,Environmental Monitoring System,,
+174964,Chrysene,Environmental Monitoring System,,
+1376,Cobalt Extractable,Environmental Monitoring System,,
+734,Color Apparent,Environmental Monitoring System,,
+233,Color S./W. Diss.,Environmental Monitoring System,,
+9,Color TAC,Environmental Monitoring System,,
+106,Color True,Environmental Monitoring System,,
+1990950,Colour (True),CABIN,,
+5152,Copper Extractable,Environmental Monitoring System,,
+62999,Cyanide Dissolved,Environmental Monitoring System,,
+61273,Cyanide S.A.D.,Environmental Monitoring System,,
+174849,Dibenzo(a;h)anthracene,Environmental Monitoring System,,
+1005606,Dimethyl Diselenide [DMDSe]; as Se,Environmental Monitoring System,,
+1005149,Dimethyl Selenide [DMSe]; as Se,Environmental Monitoring System,,
+73003,Dimethylseleneoxide,Environmental Monitoring System,,
+14135,Dissolved Oxygen-Field,Environmental Monitoring System,2,Oxygen Dissolved
+1697087,Elements,Columbia Basin Waterhub,,
+3482,Enterococcus,Environmental Monitoring System,,
+1661424,EPHw10-19,Columbia Basin Waterhub,,
+1661425,EPHw19-32,Columbia Basin Waterhub,,
+6900,Extinction Depth,Environmental Monitoring System,,
+99381,Fish Bioassay(Pass/Fail),Environmental Monitoring System,,
+155,Flow (Rate),Environmental Monitoring System,,
+174211,Fluoranthene,Environmental Monitoring System,,
+174690,Fluorene,Environmental Monitoring System,,
+3561,Gallium Extractable,Environmental Monitoring System,,
+2272,Hardness Total (Extractable),Environmental Monitoring System,,
+6265,Hardness Total (Total),Environmental Monitoring System,,
+134079,Heavy Extractable Petroleum Hydrocarbons,Environmental Monitoring System,,
+85045,Hydrocarbons;Extract,Environmental Monitoring System,,
+174270,Hydrocarbons;Petroleum,Environmental Monitoring System,,
+130165,Hydrogen Peroxide,Environmental Monitoring System,,
+1662432,Hydroxide,Columbia Basin Waterhub,,
+700710,Hydroxide Alkalinity (as CaCO3),Environmental Monitoring System,,
+201622,Indeno(1;2;3-cd)pyrene,Environmental Monitoring System,,
+7255,Iron Extractable,Environmental Monitoring System,,
+104,Lanthanum Dissolved,Environmental Monitoring System,,
+12510,Lanthanum Extractable,Environmental Monitoring System,,
+462,Lathanum Total,Environmental Monitoring System,,
+641,Lead Extractable,Environmental Monitoring System,,
+145728,Light Extractable Petroleum Hydrocarbons,Environmental Monitoring System,,
+2616,Lithium Extractable,Environmental Monitoring System,,
+105,Magnesium Extract.,Environmental Monitoring System,,
+4031,Manganese Extractble,Environmental Monitoring System,,
+5654,Mercury Extractable,Environmental Monitoring System,,
+444854,Met.Tert.Butyl Ether,Environmental Monitoring System,,
+79688,Methaneselenonic Acid CH4O3Se,Environmental Monitoring System,,
+67378,methylseleninic acid CH3SeO2H,Environmental Monitoring System,,
+179502,Moisture,Environmental Monitoring System,,
+7382,Molybdenum Extractable,Environmental Monitoring System,,
+175191,NA,Environmental Monitoring System,,
+1774110,NA,Columbia Basin Waterhub,,
+174403,Naphthalene (C10H8),Environmental Monitoring System,,
+1245,Nickel Extractable,Environmental Monitoring System,,
+165,Niobium Dissolved,Environmental Monitoring System,,
+7696,Niobium Extractable,Environmental Monitoring System,,
+464,Niobium Total,Environmental Monitoring System,,
+32,Nitrogen (Kjeldahl) Total Dissolved,Environmental Monitoring System,,
+303,Nitrogen Kjel.Tot(N),Environmental Monitoring System,,
+1661376,"Nitrogen, Total Kjeldahl ",Columbia Basin Waterhub,,
+61094,Oil & Grease,Environmental Monitoring System,,
+700363,Organics Special,Environmental Monitoring System,,
+1988962,Ortho Phosphorus (ortho-P dissolved),CABIN,,
+1661614,Orthophosphate (P),Columbia Basin Waterhub,,
+1204597,Oxid. Red. Potential,Environmental Monitoring System,,
+173996,Oxid. Red. Potential- Field,Environmental Monitoring System,,
+1311619,Ozone for water,Environmental Monitoring System,,
+204688,PAH's; High Molecular Weight,Environmental Monitoring System,,
+185952,PAH's; Low Molecular Weight,Environmental Monitoring System,,
+229,Palladium Dissolved,Environmental Monitoring System,,
+5629,Part. Size >400 Mesh,Environmental Monitoring System,,
+49138,Part. Size 100 Mesh,Environmental Monitoring System,,
+44160,Part. Size 140 Mesh,Environmental Monitoring System,,
+43240,Part. Size 16 Mesh,Environmental Monitoring System,,
+28113,Part. Size 200 Mesh,Environmental Monitoring System,,
+29995,Part. Size 270 Mesh,Environmental Monitoring System,,
+47419,Part. Size 30 Mesh,Environmental Monitoring System,,
+41381,Part. Size 400 Mesh,Environmental Monitoring System,,
+46528,Part. Size 50 Mesh,Environmental Monitoring System,,
+421660,Part.Ash:Total,Environmental Monitoring System,,
+61512,Phaeophytin A,Environmental Monitoring System,,
+174143,Phenanthrene,Environmental Monitoring System,,
+928,Phenols,Environmental Monitoring System,,
+67666,pH-Field,Environmental Monitoring System,,
+19,Phosphorus Ort.Dis-P,Environmental Monitoring System,,
+418,Phosphorus Ortho,Environmental Monitoring System,,
+629,Platinum Dissolved,Environmental Monitoring System,,
+22790,Platinum Extractable,Environmental Monitoring System,,
+159,Platinum Total,Environmental Monitoring System,,
+28,Potassium Extractable,Environmental Monitoring System,,
+176151,Pyrene,Environmental Monitoring System,,
+176581,Quinoline aka Benzo(b)pyridine,Environmental Monitoring System,,
+40,Residue: Filterable 1.0u (TDS),Environmental Monitoring System,,
+642,Residue: Fixed Filterable (TDS; Fixed),Environmental Monitoring System,,
+936,Residue: Fixed Non-filterable (TSS; Fixed),Environmental Monitoring System,,
+95,Residue: Non-filterable (TSS),Environmental Monitoring System,,
+272,Residue: Total (Total Solids),Environmental Monitoring System,,
+49040,Residue: Total Fixed (Total Solids; Fixed),Environmental Monitoring System,,
+2712,Residue: Volatile Non-filterable (TSS; Volatile),Environmental Monitoring System,,
+97,Residue: VolatileFilt (TDS; Volatile),Environmental Monitoring System,,
+47,Rubidium Dissolved,Environmental Monitoring System,,
+3674,Rubidium Extractable,Environmental Monitoring System,,
+42,Rubidium Total,Environmental Monitoring System,,
+70884,selenate SeO4(-2),Environmental Monitoring System,,
+66193,selenite SeO3(-2),Environmental Monitoring System,,
+1462,Selenium Extractable,Environmental Monitoring System,,
+66728,selenocyanate SeCN(-1),Environmental Monitoring System,,
+70926,selenomethionine CH3SeCH2CH2CH(NH2)CO2H,Environmental Monitoring System,,
+73689,Selenosulfate,Environmental Monitoring System,,
+10363,Silica Reactive,Environmental Monitoring System,,
+20,Silica Reactive Diss,Environmental Monitoring System,,
+2267,Silicon Extractable,Environmental Monitoring System,,
+15846,Silver Extractable,Environmental Monitoring System,,
+24,Sodium Extractable,Environmental Monitoring System,,
+1989319,Specific Conductance @ 25 deg C,CABIN,,
+64766,Specific Conductivity-Field,Environmental Monitoring System,,
+1988926,Stream or Lake Surface Temperature,CABIN,,
+246245,Streptococcus -Fecal,Environmental Monitoring System,,
+5222,Strontium Extractable,Environmental Monitoring System,,
+34508,Surfactants,Environmental Monitoring System,,
+2865,Surfactants Diss.,Environmental Monitoring System,,
+247343,Tannin &Lignin Total,Environmental Monitoring System,,
+113,Temperature (Air),Environmental Monitoring System,,
+1507,Thallium Extractable,Environmental Monitoring System,,
+36153,Tin Extractable,Environmental Monitoring System,,
+1988919,"Total Dissolved Solids, filterable residue",CABIN,,
+1989259,Total Kjeldahl Nitrogen (calculated),CABIN,,
+178267,Total Polyaromatic Hydrocarbons,Environmental Monitoring System,,
+25091,Tungsten Extractable,Environmental Monitoring System,,
+66964,Unknown Selenium Species,Environmental Monitoring System,,
+156,Uranium Extractable,Environmental Monitoring System,,
+1825,Vanadium Extractable,Environmental Monitoring System,,
+136630,Water Level,Environmental Monitoring System,,
+30,Yttrium Dissolved,Environmental Monitoring System,,
+10789,Yttrium Extractable,Environmental Monitoring System,,
+38,Yttrium Total,Environmental Monitoring System,,
+2623,Zinc-Extractable,Environmental Monitoring System,,
