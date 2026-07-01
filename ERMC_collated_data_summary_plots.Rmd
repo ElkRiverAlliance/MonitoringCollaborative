@@ -1,0 +1,284 @@
+---
+title: "ERA - Elk River Monitoring COllaborative - Surface water quality summary plots"
+author: "Elizabeth Law"
+date: "`r Sys.Date()`"
+output: word_document
+---
+
+# Aim 
+This document has been developed to generate data summaries for the Elk River Monitoring Collaborative https://elkrivercollaborative.ca/. It has been adapted from prior code, to simplify and further explain the process and update figures for required parameters.
+
+Document history:
+
+* developed from ./Data Overview Markdown.Rmd written by Evgeni Matveev. 
+
+Required data:
+
+* ERMC_consolidated_data_2025.csv
+* the latest data in this are from "2025-05-19 UTC" 
+
+These data include the following original data, which were pre-processed into the one data source using the code from the prior script (./Data Overview Markdown.Rmd), so reduce the processing in this script.
+
+* Consolidated Data-Selected.csv (which collates and aligns the data from different sources, developed using the code: Data Consolidation Markdown-Clean.Rmd)
+* Consolidated_Data_Corrections_only.csv (which includes corrected data, including, among other things, standardisation of names, and checks for typos, decimal place, unit errors etc. This was made by the code Data_Fixing_AM.Rmd, by Alex McClymont)
+
+# Contents
+
+1. Initial setup of R and RStudio 
+2. Analysis setup - settings, load libraries and data, specify general variables
+3. List available parameters
+4. Set up the plot function
+5. Use the plot function on the list of parameters
+
+# Initial setup of R and RStudio
+*R software* is generally run through *RStudio*, which is a user-friendly front end for R. You don't "need" RStudio, but most people use it because it makes life easier. It has a code editor, which helpfully colours the code so it is easier to see what is going on, and provides easy views of code (text editor), the console (where things run), the environment (wahat objects exist), files, plots, etc. To install these, go to https://posit.co/download/rstudio-desktop/ and follow the instructions and links, first to install R, then to install RStudio.
+
+There are MANY great resources or videos to learn the basics of R, so I won't try to do that here. A useful, if more comprehensive, start to R is the open textbook "R for Data Science" https://r4ds.hadley.nz/ or "from zero to pro" https://r02pro.github.io/.
+
+I recommend using *R Projects* to organise R workflows. An R Project is a single file (.Rproj) that acts like a self-contained home base for your work. What it does:
+
+* Sets your working directory to the project folder automatically - and allows you to use relative paths to share code easier.
+* Remembers which files you had open and your RStudio settings - improves sharing and reproducibility
+* Bundles your code, data, plots, and outputs into one folder - and can easily be synced in github.
+
+If you are using existing code, you may already have a .Rproj file you could open. Otherwise, to set one up:
+
+* File > New Project > and either create in an existing directory or in an existing project folder.
+
+Within the folder, on the same level as the .Rproj file, I like to include, at minimum, a "Data" folder (to house all my data), and a "Results" folder (to house all my results). I may also include an "R" folder (if i am writing more complex analyses with several parts, I will keep most of the function code here), a "Figures" folder if I want to separate these from results, and a "RawData" folder that contains the raw data only (when all else fails I know i have an untouched copy of the original data). 
+
+Code can be written in a ".R" file, which is a bit like a .txt file, or, like this document, a ".Rmd" Rmarkdown file. Rmarkdown documents consist of a "yaml header", text sections, and code chunks. The benefits of Rmarkdown files is that we can "knit" to an html, pdf, or word document, so it is useful for making reports (or when writing lots of explanation of the code). You can change the chunk settings so they show or don't show the code, messages, warnings, etc. In both code chunks and .R files comments (stuff that is not meant to be run as code) can be prefixed with a #, either at the beginning of a line, or part way through. In the text sections of Rmarkdown files, # will make first level headers, ## second level headers, and so on.
+
+Packages ('libraries') are contributed code, in addition to the base R. You can install them by using the install.packages function - for example the following chunk will load the *tidyverse* suite of packages. Note, I've set "eval=FALSE" in the chunk settings, so this will not run (every time) when we knit the document (or run the chunk).
+
+```{r example-install-package, eval=FALSE}
+install.packages("tidyverse")
+```
+
+Help. Help on a function can be found by typing "?[function]" in the console (which will search loaded packages), or "??[function]" which will search all installed packages. There are many forums (searchable in a browser) that help explain things, or ask an AI platform - these are generally really good for coding help, but note they can always hallucinate (make up functions) or suggest hacks (like removing awkward data) when these are not really what you want to do.
+
+# Document/Analysis setup
+This code chunk contains the setup for the analysis. Here, we specify:
+
+* "knit" options used for generating the report 
+* the packages (libraries) we use for the analysis/visualisation
+* load the data that we will use
+* load stadia maps and define data colours
+
+Note, here we are using statia maps with an API key that Evgeni had. This may expire and, if so, we will need to re-generate and insert that in here.
+```{r setup, include=TRUE}
+knitr::opts_chunk$set(echo = TRUE)
+
+# packages used
+library(tidyverse) # general data management/programming. this loads a suite of packages. 
+library(ggmap)     # maps in figures
+library(ggrepel)   # labeling for plots
+library(patchwork) # arrangement of multiple plots
+
+# load data
+OverviewData <- read_csv("Data/ERMC_consolidated_data_2025.csv", guess_max = Inf) %>% 
+  mutate(DATE = as.POSIXct(DATE,format="%Y/%m/%d %H:%M:%S",tz="UTC"))
+
+# make background site map
+register_stadiamaps("e3c4d29c-45ed-461c-b37f-12163580e74c", write = FALSE)
+
+bbox <- c(-115.366745,48.899592,-114.514182,50.571261)
+SiteMapbbox <- get_stadiamap(bbox=bbox,maptype = "stamen_terrain", zoom =9 )
+
+# specify colors for plotting
+DATA_OWNER_colors <- c("BC ENV"="#86c728ff",
+                       "District of Elkford"="#9bcbecff", 
+                       "Columbia Basin Water Hub"="#67a799ff",
+                       "District of Sparwood"="#305b2cff",
+                       "RDEK"="#e1be10ff",
+                       "Foothills Pipe Lines"="#d068cdff",
+                       "ECCC"="#7a2e54ff",
+                       "EVR"="#645cfbff",
+                       "Elk River Alliance"="#1abdc0ff",
+                       "City of Fernie"= "#d75124ff",
+                       "Water Survey Canada"="#b35c7fff",
+                       "Weather Canada"="#a30808ff",
+                       "Fernie Alpine Resort"="#eadc8eff",
+                       "NA"="grey")
+```
+
+What parameters are available for plotting? Here we create a variable of these for use later, and print out to screen.
+```{r data_parameters_available}
+parameter_list <- OverviewData$PARAMETER_GENERAL %>% unique() %>% sort()
+
+cat("Available parameters: ", parameter_list, sep = "\n" )
+```
+
+This section of code provides the code to construct the figure. I've re-written it as a function so it is easy to run for all parameters.
+It will save the plot to a folder "Results/SummaryPlot_[parameter].png" where [parameter] is the selected parameter. Make sure you have a results folder in your project folder.
+```{r Data-Summary-Graph-Function}
+
+data_summary_graph <- function(
+    # variables required to run the function - here we set defaults so the function will run
+    Parameter = "Selenium", #"Fecal Bacteria", 
+    Data = OverviewData, 
+    Basemap = SiteMapbbox, 
+    Owner_colors = DATA_OWNER_colors, 
+    verbose = TRUE # debugging messages
+    ){
+  # first set up log message if requested:
+  log_msg <- function(...) {if (isTRUE(verbose)) { message(sprintf(...))} }
+  log_msg("========================================")
+  log_msg("Starting parameter = '%s'", Parameter)
+  
+  # subset the data to only include the parameter of interest
+  pdata <- Data %>% subset(PARAMETER_GENERAL==Parameter)
+  
+  # make the data for each of the sections
+  log_msg("Creating owner summary data...")
+  Data_OwnerSummary <- pdata %>%
+    distinct(DATA_OWNER, SITE_ID) %>%
+    count(DATA_OWNER, name = "nsites") %>%
+    arrange(nsites) %>%
+    mutate(DATA_OWNER_nsites = paste0(DATA_OWNER, " (", nsites, ")"))
+
+  log_msg("Creating year frequency data...")  
+  Data_YearFreq <- pdata%>%
+    group_by(SITE_ID)%>%
+    summarise(x=n_distinct(year))
+  
+  log_msg("Creating sites data...") 
+  Data_Sites <- pdata %>%
+  group_by(SITE_ID) %>%
+  summarise(
+    year_count = n_distinct(year),
+    max_year = max(year),
+    LONGITUDE = first(LONGITUDE),
+    LATITUDE = first(LATITUDE),
+    DATA_OWNER = first(DATA_OWNER),
+    .groups = "drop"
+  ) %>%
+  mutate(size_bin = case_when(
+    year_count < 2 ~ "1",
+    year_count <= 5 ~ "2-5",
+    year_count <= 10 ~ "6-10",
+    year_count <= 30 ~ "11-30",
+    year_count <= 60 ~ "31-60",
+    TRUE ~ "61+"
+  ))
+  
+  size_values <- c("1" = 1,
+                 "2-5" = 2,
+                 "6-10" = 3,
+                 "11-30" = 4,
+                 "31-60" = 5,
+                 "61+" = 6)
+
+  log_msg("Creating error data...")   
+  Data_Errors <- pdata %>%
+    filter(!is.na(CORRECTION_TYPE)) %>%
+    distinct(SITE_ID, CORRECTION_TYPE, DATA_OWNER) %>%
+    count(CORRECTION_TYPE, DATA_OWNER, name = "site_count")
+
+  log_msg("Creating sample frequency data...")    
+  Data_SampleFrequency <- pdata %>%
+    group_by(SITE_ID, year) %>%
+    summarise(days_per_year = n_distinct(day), .groups = "drop") %>%
+    group_by(SITE_ID) %>%
+    summarise(avg_days_per_year = mean(days_per_year))
+  
+  # make the plot components
+  Plot_YearFreq <- ggplot(Data_YearFreq) +
+    geom_histogram(aes(x=x),fill="black") +
+    geom_vline(xintercept=10,col="lightgrey",linetype="dashed") + 
+    labs(x = "# Years Monitored",
+         y="# Sites",
+         title = paste0("# sites with >10 monitoring years: ", nrow(subset(Data_YearFreq,x>10)), " (",round(nrow(subset(Data_YearFreq,x>10))/nrow(Data_YearFreq),2)*100,"%)")) +
+    theme_classic() +
+      theme(plot.title = element_text(colour = "grey"))
+      
+  Plot_SiteMap <- ggmap(Basemap) +
+    geom_point(data=Data_Sites,
+               aes(y=LATITUDE, x=LONGITUDE, fill=DATA_OWNER, size=size_bin, shape=ifelse(max_year>2015,"Yes","No")),
+               stroke=1) +
+    labs(size="# Years Monitored",
+         shape="Site Monitored Since 2015?",
+         fill="Data Owners") +
+    scale_shape_manual(values=c(22,21)) +
+    labs(x = "Longitude", y = "Latitude") +
+    scale_fill_manual(values=Owner_colors, guide = guide_legend(override.aes = list(size=3,shape=21))) +
+    scale_size_manual(values = size_values, guide = guide_legend(override.aes = list(shape = 21))) +
+    theme(axis.text=element_text(size=10)) +
+    theme(legend.position = "left")
+
+  Plot_OwnerSummary <- ggplot(Data_OwnerSummary, aes(y=nsites,x=3,fill=reorder(DATA_OWNER,nsites))) +
+    geom_col() +
+    labs(fill="Data Owners") +
+    annotate("text", x=0.5, y=1, label=paste("Total Sites: ", sum(Data_OwnerSummary$nsites)), col="grey", size=5) +
+    geom_label_repel(aes(label=nsites), position=position_stack(vjust=0.5), size=3) +
+    scale_fill_manual(values=Owner_colors,guide = guide_legend(override.aes = list(label = "    "))) +
+    coord_polar(theta="y") +
+    xlim(c(0.2, 3.5)) +
+    theme_void()
+
+  Plot_Errors <- if (nrow(Data_Errors) == 0) {
+    ggplot() +
+      annotate("text", x = 0.5, y = 0.5, label = "[No identified errors in these data]", size = 4.5, color='grey') +
+      theme_void()
+  } else {
+    ggplot(Data_Errors, aes(x=site_count, y=CORRECTION_TYPE, fill=DATA_OWNER)) +
+      geom_col() +
+      scale_fill_manual(values=c(Owner_colors)) +
+      labs(x="# Sites", y="") +
+      theme_classic() +
+        theme(legend.position = "none")
+  }
+  
+  Plot_SampleFrequency <- ggplot(Data_SampleFrequency, aes(x=avg_days_per_year)) +
+    geom_histogram(fill="black") +
+    geom_vline(xintercept=12,col="lightgrey",linetype="dashed") + 
+    labs(x="Average # Samples/Year", y="# Sites",
+         title = paste0("# sites with >12 samples/year: ", 
+                        nrow(subset(Data_SampleFrequency,avg_days_per_year>12)),  
+                        " (",
+                        round(nrow(subset(Data_SampleFrequency,avg_days_per_year>12))/nrow(Data_SampleFrequency),2)*100,
+                        "%)")) +  
+    theme_classic() +
+      theme(plot.title = element_text(colour = "grey"))
+  
+  # assemble figure and save to file
+  log_msg("Assembling plots...")    
+  Plot_Summary <- Plot_SiteMap | (Plot_OwnerSummary/Plot_Errors/Plot_YearFreq/Plot_SampleFrequency)
+  Plot_Summary <- Plot_Summary + 
+    plot_annotation(
+      title = Parameter,
+      tag_levels = 'A')
+
+  filepath <- paste0("Results/SummaryPlot_", Parameter,".png")
+  log_msg("Saving plot to: %s", filepath)
+  ggsave(filepath, plot=Plot_Summary, height=14, width=13)
+  
+  log_msg("Done parameter = '%s'", Parameter)
+  
+  return(Plot_Summary)
+}
+
+```
+
+# Plot for single parameter
+Next, we use this function to plot for each parameter. We can program this, so we don't have to type in every parameter. But first, lets try it for just one parameter.
+```{r run_1_parameter}
+
+# The default uses "Fecal Bacteria"
+data_summary_graph()
+
+# We can change this by specifying the parameter
+data_summary_graph(Parameter="Selenium")
+
+```
+
+# Plot for all available parameters
+Now we can run for all the parameters by using a loop. 
+```{r run_all_parameters}
+
+for (i in parameter_list){
+  data_summary_graph(Parameter=i)
+}
+
+```
+

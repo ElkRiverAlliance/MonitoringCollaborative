@@ -1,0 +1,102 @@
+What do the different .Rmd files do?
+
+
+Data Overview Markdown.Rmd -----------------------------------------------------
+
+* starts with Consolidated_Data ("Consolidated Data-Selected.csv")
+* updates this with DataFixes ("Consolidated_Data_Corrections_only.csv"). These include things like 'likely unit error'
+* plots out pre- and post- correction figures for select variables
+* plots out frequency of error types
+* Stadia Maps. sets up:
+  - map background
+  - owner colours
+  - Plot: sites by owner plot
+  - Table Total Number of Sites 
+  - Table: Sites w >12/Year Sample Frequency
+  - Table: summary for several parameters
+  - compares number of sites in fording vs wigwam
+* Data Summary Graphs
+  - input Parameter
+  - For that parameter, creates the DataSummaryGraph - saved as paste(Parameter,"DataSummary.png")
+    - DataOwnerSummary & donut plot
+    - YearFreqPlot
+    - SiteMap (size=number of years, shape=sampled>2015)
+    - DataErrorPlot
+    - DataSampleFrequencyPlot
+* Top Years
+  - input parameter
+  - for each will 
+    - list the site parameter is observed at
+    - list and plot out the top 20 sites by unique(year) count
+* Flow Seasonal & Temporal Graphs
+  - select flow sites
+  - makes FlowSummaryGraph, including:
+    - FlowSiteMap
+    - FlowTimeseriesPlot
+    - FlowSeasonalityPlot
+* For nitrogen, makes a summary plot, which includes
+  - NitrogenDissolvedSiteMap 
+  - NitrogenDissolvedDataDonut
+  - NitrogenDissolvedYearFreqPlot
+  - NitrogenDissolvedTimeseriesPlot
+  - NitrogenDissolvedSeasonalityPlot
+  - saves as NitrogenDissolvedDataSummary.png
+* For selenium, several selenium parameter categories have been grouped together
+  - Selenium Total
+  - Selenate
+  - Selenite
+  - Selenocyanate
+  - Selenomethionine
+  - Selenosulfate
+  
+Data Summary Markdown.Rmd ------------------------------------------------------
+* uses ("Consolidated Data.csv")
+* plots number of sites per owner
+* test of leaflet to plot sites
+* Sites section
+  - links to google engine
+  - loads elk river watershed
+  - loads basin polygon with stream names
+  - tests leaflet map 
+* Does similar for flow sites, DO, Turbidity
+* then "All" seciton - select input parameter
+  - TimeseriesPlot - saved as "Timeseries-plot.png"
+  - SeasonalPlot - saved as "Seasonal-plot.png"
+  - SpatialPlot - saved as "Spatial-plot.png"
+  - map 
+* Benthics
+  - For select sites
+      - BenthicsProportions plot - saved as "Benthics-plot.png"
+      - map
+
+Data_Fixing_AM.Rmd -------------------------------------------------------------
+* by AlexMcClymont
+* read_csv("./Consolidated Data-selected.csv")
+* checks / corrections
+  - site names, location duplicates
+  - result/value corrections (below detection, unit errors) - selenium, nitrogen, nickel, sulphur, sulfate, temperature, phosphorus, flow, selenate, selenite, turbidity, calcium
+  - writes corrections only to "Consolidated_Data_Corrections_only.csv"
+  - writes updated to "Consolidated_Data_Including_Corrections.csv"
+  - Tables errors by error type, parameter, and data owner
+  
+Data Consolidation Markdown-Clean.Rmd ------------------------------------------
+* creates the files
+  - #write.csv(all_data,"Consolidated Data-Full.csv")
+  - write.csv(all_data_selected,"Consolidated Data-Selected.csv")
+  - #write.csv(all_data_tiny,"Consolidated Data-Tiny.csv")
+* these are made from
+  - input shapefile "./ERW Shape File/ElkRiverWatershed_CA_US.shp"
+  - Stream lines and basin polygons Downloaded from:https://maps.gov.bc.ca/ess/hm/imap4m/
+  - BC landuse layers from file "./BC Landuse Layers/2023 BC Landuse layers.shp"
+  - Environmental Monitoring System EMS data downloads
+  - Hydrometric Data Part 1-Water Survey Canada
+  - Hydrometric Data Part 2-BC Data Catalogue
+  - Snow Water Equivalent BC Data catalogue
+  - water hub data https://data.cbwaterhub.ca/
+  - WeatherCan Data
+  - Cabin data 
+    - "https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_study_data_mda08_1987-present.csv"
+    - "https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_benthic_data_mda08_1987-present.csv"
+    - "https://cabin-rcba.ec.gc.ca/Cabin/opendata/cabin_habitat_data_mda08_1987-present.csv"
+  - calculates site elevation, basin
+* includes some other plots. 
